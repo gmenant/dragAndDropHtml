@@ -1,0 +1,44 @@
+html,
+body {
+  margin: 0;
+  font-family: sans-serif;
+  box-sizing: border-box;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+}
+
+.react-flow__edge-textbg {
+  fill: #f7f9fb;
+}
+
+
+.flow-nodes{
+  width: 100vw;
+}
+
+.flow-card {
+  width: 12rem;
+}
+
+.flow-step-add{
+color: var(--bs-secondary); 
+  line-height: 1;
+}
+
+.flow-step-add:hover {
+  color: var(--bs-success);   
+  transition: color 0.15s ease;
+}
+
+.flow-card-btn-close {
+  color: var(--bs-secondary); 
+  line-height: 1;
+}
+
+.flow-card-btn-close:hover {
+  color: var(--bs-danger);   
+  transition: color 0.15s ease;
+}
