@@ -1,21 +1,116 @@
 import { Fragment, useState } from 'react';
-import { CircleX, SquarePlus, SquareChevronLeft, SquareChevronRight, Flag, KeyRound } from 'lucide-react';
+import { Trash, SquarePlus, SquareChevronLeft, SquareChevronRight, Flag, KeyRound, Pencil, CircleX, Globe, AtSign, User, Form } from 'lucide-react';
+//import { Form } from '@maif/react-forms';
 
-const CARD_TYPES = ['callHttp', 'Form', 'Mail'] as const;
-type CardType = typeof CARD_TYPES[number];
-type CardData = { id: string; type: CardType };
+const CARD_TYPES = {
+  CALLHTTP: 'callHttp',
+  FORM: 'Form',
+  MAIL: 'Mail',
+  VALIDATION_ADMIN: 'validationAdmin',
+} as const;
+
+type CardType = (typeof CARD_TYPES)[keyof typeof CARD_TYPES];
 type Step = { id: string; cards: CardData[] };
 
+type CallHttpContent = {
+  title?: string[];
+  requete?: string[];
+  headers?: string[];
+  corps?: string[];
+  response?: string[];
+};
+
+type MailContent = {
+  title?: string[];
+  to?: string[];
+  message?: string[];
+};
+
+type ValidationAdminContent = {
+  title?: string[];
+  equipe?: string[];
+  canal?: string[];
+};
+
+type FormContent = {
+  title?: string[];
+  champs?: string[];
+  formatter?: string[];
+  metadata?: string[];
+};
+
+type BaseCard = { id: string; schema?: string };
+
+type CardData =
+  | (BaseCard & { type: typeof CARD_TYPES.CALLHTTP; content?: CallHttpContent })
+  | (BaseCard & { type: typeof CARD_TYPES.FORM; content?: FormContent })
+  | (BaseCard & { type: typeof CARD_TYPES.MAIL; content?: MailContent })
+  | (BaseCard & { type: typeof CARD_TYPES.VALIDATION_ADMIN; content?: ValidationAdminContent });
+
+type PillsRowProps = {
+  label: string;
+  values?: string[];
+};
+
+const PillsRow = ({ label, values }: PillsRowProps) => (
+  <div className="card-summary-row">
+    <dt>{label}</dt>
+    <dd>
+      {values?.map((v, i) => (
+        <code key={`${v}-${i}`}>{v}</code>
+      ))}
+    </dd>
+  </div>
+);
+
+
+  const CallHttpSummary = ({ content }: { content?: CallHttpContent }) => (
+  <dl className="card-summary">
+    <Globe />
+    <PillsRow label="Requête" values={content?.requete} />
+    <PillsRow label="Headers" values={content?.headers} />
+    <PillsRow label="Corps" values={content?.corps} />
+    <PillsRow label="Réponse" values={content?.response} />
+  </dl>
+);
+
+const MailSummary = ({ content }: { content?: MailContent }) => (
+  <dl className="card-summary">
+    <AtSign />
+    <PillsRow label="Destinataires" values={content?.to} />
+    <PillsRow label="Message" values={content?.message} />
+  </dl>
+);
+
+const ValidationAdminSummary = ({ content }: { content?: ValidationAdminContent }) => (
+  <dl className="card-summary">
+    <User />
+    <PillsRow label="Equipe" values={content?.equipe} />
+    <PillsRow label="Canal" values={content?.canal} />
+  </dl>
+);
+
+const FormSummary = ({ content }: { content?: FormContent }) => (
+  <dl className="card-summary">
+    <Form />
+    <PillsRow label="Champs" values={content?.champs} />
+    <PillsRow label="Formatter" values={content?.formatter} />
+    <PillsRow label="Metadata" values={content?.metadata} />
+  </dl>
+);
+
+
+
 const initialSteps: Step[] = [
-  { id: 'step-1', cards: [{ id: 'card-1', type: 'callHttp' }] },
-  { id: 'step-2', cards: [{ id: 'card-2', type: 'Form' }, { id: 'card-3', type: 'Mail' }] },
-  { id: 'step-3', cards: [{ id: 'card-4', type: 'callHttp' }] },
+  { id: 'step-1', cards: [{ id: 'card-1', type: CARD_TYPES.CALLHTTP, content: { title: ["Controle conformité"], requete: [""], headers: ["Authorization"], corps: ["demand"], response: ["accept: true | false"] }, schema: "" }] },
+  { id: 'step-2', cards: [{ id: 'card-2', type: CARD_TYPES.FORM, content: {}, schema: "" }, { id: 'card-3', type: CARD_TYPES.MAIL, content: {}, schema: "" }] },
+  { id: 'step-3', cards: [{ id: 'card-4', type: CARD_TYPES.CALLHTTP, content: {}, schema: "" }] },
 ];
 
-const InsertButton = ({ onClick,  onDropCard }: { onClick: () => void,  onDropCard: (fromStepId: string, cardId: string) => void; }) => {
+const InsertButton = ({ onClick, onDropCard }: { onClick: () => void, onDropCard: (fromStepId: string, cardId: string) => void; }) => {
   const [isOver, setIsOver] = useState(false);
   return (
-  <button
+    <button
       onClick={onClick}
       className={`flow-step-add border-0 bg-transparent ${isOver ? 'btn' : 'btn-success'} `}
       onDragOver={e => {
@@ -33,8 +128,9 @@ const InsertButton = ({ onClick,  onDropCard }: { onClick: () => void,  onDropCa
         onDropCard(stepId, cardId);
       }}
     >
-     <SquarePlus />
-  </button>)}
+      <SquarePlus />
+    </button>)
+}
 
 type TypePickerProps = {
   onSelect: (type: CardType) => void;
@@ -48,9 +144,9 @@ const TypePicker = ({ onSelect, onCancel }: TypePickerProps) => (
       onClick={onCancel}
       aria-label="Annuler"
     >
-      <CircleX/>
+      <CircleX />
     </button>
-    {CARD_TYPES.map(t => (
+    {Object.values(CARD_TYPES).map(t => (
       <button
         key={t}
         className="btn btn-sm btn-outline-primary"
@@ -66,28 +162,28 @@ const TypePicker = ({ onSelect, onCancel }: TypePickerProps) => (
 const App = () => {
   const [steps, setSteps] = useState<Step[]>(initialSteps);
   const [pickingAt, setPickingAt] = useState<number | null>(null);
- 
+
   const newCard = (type: CardType = 'callHttp'): CardData => ({ id: crypto.randomUUID(), type });
 
   const renderSlot = (index: number) =>
-  pickingAt === index ? (
-    <TypePicker
-      onSelect={type => insertStepProcess(index, type)}
-      onCancel={() => setPickingAt(null)}
-    />
-  ) : (
-    <InsertButton
-      onClick={() => setPickingAt(index)}
-      onDropCard={(fromStepId, cardId) => moveCardToNewStep(fromStepId, cardId, index)}
-    />
-  );
+    pickingAt === index ? (
+      <TypePicker
+        onSelect={type => insertStepProcess(index, type)}
+        onCancel={() => setPickingAt(null)}
+      />
+    ) : (
+      <InsertButton
+        onClick={() => setPickingAt(index)}
+        onDropCard={(fromStepId, cardId) => moveCardToNewStep(fromStepId, cardId, index)}
+      />
+    );
 
   const insertStepProcess = (index: number, type: CardType) => {
     setSteps(prev => [
-        ...prev.slice(0, index),
-        { id: crypto.randomUUID(), cards: [newCard(type)] },
-        ...prev.slice(index),
-      ])
+      ...prev.slice(0, index),
+      { id: crypto.randomUUID(), cards: [newCard(type)] },
+      ...prev.slice(index),
+    ])
     setPickingAt(null)
   };
 
@@ -110,11 +206,11 @@ const App = () => {
     });
 
   const addCard = (stepId: string, type: CardType) =>
-  setSteps(prev =>
-    prev.map(s =>
-      s.id === stepId ? { ...s, cards: [...s.cards, newCard(type)] } : s
-    )
-  );
+    setSteps(prev =>
+      prev.map(s =>
+        s.id === stepId ? { ...s, cards: [...s.cards, newCard(type)] } : s
+      )
+    );
 
   const deleteCard = (stepId: string, cardId: string) =>
     setSteps(prev =>
@@ -138,26 +234,26 @@ const App = () => {
     });
 
   const moveCardToNewStep = (fromStepId: string, cardId: string, insertIndex: number) =>
-  setSteps(prev => {
-    const card = prev.find(s => s.id === fromStepId)?.cards.find(c => c.id === cardId);
-    if (!card) return prev;
+    setSteps(prev => {
+      const card = prev.find(s => s.id === fromStepId)?.cards.find(c => c.id === cardId);
+      if (!card) return prev;
 
-    const newStep: Step = { id: crypto.randomUUID(), cards: [card] };
-    const withNew = [...prev.slice(0, insertIndex), newStep, ...prev.slice(insertIndex)];
+      const newStep: Step = { id: crypto.randomUUID(), cards: [card] };
+      const withNew = [...prev.slice(0, insertIndex), newStep, ...prev.slice(insertIndex)];
 
-    return withNew
-      .map(s =>
-        s.id === fromStepId ? { ...s, cards: s.cards.filter(c => c.id !== cardId) } : s
-      )
-      .filter(s => s.cards.length > 0);
-  });
+      return withNew
+        .map(s =>
+          s.id === fromStepId ? { ...s, cards: s.cards.filter(c => c.id !== cardId) } : s
+        )
+        .filter(s => s.cards.length > 0);
+    });
 
   return (
     <div className="flow-nodes d-flex flex-row flex-wrap align-items-center p-3">
       <div className='rounded-pill bg-light p-2 px-3 m-2 border border-2'>
-        <Flag size={"15px"}/>
+        <Flag size={"15px"} />
         Demande
-        </div>
+      </div>
       {steps.map((step, index) => (
         <Fragment key={step.id}>
           {renderSlot(index)}
@@ -174,14 +270,90 @@ const App = () => {
           />
         </Fragment>
       ))}
-    {renderSlot(steps.length)}
-    <div className='rounded-pill bg-light p-2 px-3 m-2 border border-2'>
-        <KeyRound size={"15px"}/>
+      {renderSlot(steps.length)}
+      <div className='rounded-pill bg-light p-2 px-3 m-2 border border-2'>
+        <KeyRound size={"15px"} />
         Clé API générée
-        </div>
+      </div>
     </div>
   );
 };
+
+type FormFlowCardProps = {
+  card: CardData;
+  onDelete: () => void;
+};
+
+const FormFlowCard = ({ card, onDelete }: FormFlowCardProps) => {
+  const [editable, setEditable] = useState(false);
+  //const [content, setContent] = useState({ card })
+  return (
+    <>
+      {card.type === CARD_TYPES.CALLHTTP &&
+        <CallHttpSummary/>
+        }
+      {card.type === CARD_TYPES.FORM &&
+        <FormSummary/>
+        }
+      {card.type === CARD_TYPES.MAIL &&
+        <MailSummary/>
+        }
+      {card.type === CARD_TYPES.VALIDATION_ADMIN &&
+        <ValidationAdminSummary/>
+        }
+      {card.type}
+      <FlowCardActions
+        onDelete={onDelete}
+        onEdit={() => setEditable((prev) => !prev)} />
+      {editable && (
+        <div>
+          <label htmlFor="title">Title :</label>
+          <input
+            type="text"
+            name="title"
+            id="title"
+            >
+          </input>
+          {card.type === CARD_TYPES.CALLHTTP &&
+            <div>
+              <input>
+              </input>
+              <input>
+              </input>
+            </div>
+          }
+        </div>
+      )}
+    </>
+  );
+};
+
+type FlowCardActions = {
+  onDelete: () => void;
+  onEdit: () => void;
+}
+
+const FlowCardActions = ({ onDelete, onEdit }: FlowCardActions) => {
+  return (
+    <div className='flow-card-actions p-2 d-grid gap-2 d-flex justify-content-between'>
+      <button
+        onClick={onEdit}
+        className=" p-0 border-0 bg-transparent d-inline-flex flow-card-btn-close"
+        aria-label="Editer"
+      >
+        <Pencil stroke='white' size={18} />
+      </button>
+      <button
+        onClick={onDelete}
+        className=" p-0 border-0 bg-transparent d-inline-flex flow-card-btn-close"
+        aria-label="Supprimer"
+      >
+        <Trash stroke='white' size={18} />
+      </button>
+    </div>
+  )
+}
+
 
 type FlowCardProps = {
   card: CardData;
@@ -190,32 +362,20 @@ type FlowCardProps = {
   onDelete: () => void;
 };
 
-const FlowCard = ({ card, stepId, onChangeType, onDelete }: FlowCardProps) => (
-  <div className="flow-card p-4 bg-primary text-white rounded position-relative text-break"
-    draggable={true}
-    onDragStart={e => {
-      e.dataTransfer.setData('application/json', JSON.stringify({ cardId: card.id, stepId }));
-      e.dataTransfer.effectAllowed = 'move';
-    }}
-  >
-    <button
-      onClick={onDelete}
-      className="position-absolute top-0 start-100 translate-middle p-0 border-0 bg-transparent d-inline-flex flow-card-btn-close"
-      aria-label="Supprimer"
+const FlowCard = ({ card, stepId, onDelete }: FlowCardProps) => {
+  return (
+    <div className="flow-card p-4 bg-primary text-white rounded position-relative text-break"
+      draggable={true}
+      onDragStart={e => {
+        e.dataTransfer.setData('application/json', JSON.stringify({ cardId: card.id, stepId }));
+        e.dataTransfer.effectAllowed = 'move';
+      }}
     >
-      <CircleX fill='white'/>
-    </button>
-    <select
-      className="form-select form-select-sm mb-2"
-      value={card.type}
-      onChange={e => onChangeType(e.target.value as CardType)}
-    >
-      {CARD_TYPES.map(t => (  
-        <option key={t} value={t}>{t}</option>
-      ))}
-    </select>
-  </div>
-);
+      <FormFlowCard card={card} onDelete={onDelete} />
+    </div>)
+};
+
+
 
 type FlowStepProps = {
   step: Step;
@@ -278,21 +438,21 @@ const FlowStep = ({
           ))}
 
           {isPicking ? (
-              <TypePicker
-                onSelect={type => {
-                  onAddCard(type);
-                  setIsPicking(false);
-                }}
-                onCancel={() => setIsPicking(false)}
-              />
-            ) : (
-              <button
-                onClick={() => setIsPicking(true)}
-                className="btn btn-sm btn-outline-secondary"
-              >
-                + en parallèle
-              </button>
-            )}
+            <TypePicker
+              onSelect={type => {
+                onAddCard(type);
+                setIsPicking(false);
+              }}
+              onCancel={() => setIsPicking(false)}
+            />
+          ) : (
+            <button
+              onClick={() => setIsPicking(true)}
+              className="btn btn-sm btn-outline-secondary"
+            >
+              + en parallèle
+            </button>
+          )}
         </div>
 
         {canMoveRight && (

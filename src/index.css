@@ -42,3 +42,11 @@ color: var(--bs-secondary);
   color: var(--bs-danger);   
   transition: color 0.15s ease;
 }
+
+.flow-card-actions {
+  border-top: 1px solid
+}
+
+input{
+  width:150px;
+}
