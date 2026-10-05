@@ -37,6 +37,7 @@ type FormContent = {
   champs?: string[];
   formatter?: string[];
   metadata?: string[];
+  info?: string
 };
 
 type BaseCard = { id: string; schema?: string };
@@ -64,9 +65,19 @@ const PillsRow = ({ label, values }: PillsRowProps) => (
 );
 
 
-  const CallHttpSummary = ({ content }: { content?: CallHttpContent }) => (
+const CallHttpSummary = ({ content }: { content?: CallHttpContent }) => (
   <dl className="card-summary">
-    <Globe />
+    <div className="card-summary-title d-flex gap-1">
+      <div className="card-summary-icone">
+        <Globe size ={16}/>
+      </div>
+      <div>
+          HTTP
+        <h6>
+          {content?.title}
+        </h6>
+      </div>
+    </div>
     <PillsRow label="Requête" values={content?.requete} />
     <PillsRow label="Headers" values={content?.headers} />
     <PillsRow label="Corps" values={content?.corps} />
@@ -76,7 +87,17 @@ const PillsRow = ({ label, values }: PillsRowProps) => (
 
 const MailSummary = ({ content }: { content?: MailContent }) => (
   <dl className="card-summary">
-    <AtSign />
+    <div className="card-summary-title d-flex gap-1">
+      <div className="card-summary-icone">
+        <AtSign size ={16}/>
+      </div>
+      <div>
+          MAIL
+        <h6>
+          {content?.title}
+        </h6>
+      </div>
+    </div>
     <PillsRow label="Destinataires" values={content?.to} />
     <PillsRow label="Message" values={content?.message} />
   </dl>
@@ -84,7 +105,17 @@ const MailSummary = ({ content }: { content?: MailContent }) => (
 
 const ValidationAdminSummary = ({ content }: { content?: ValidationAdminContent }) => (
   <dl className="card-summary">
-    <User />
+    <div className="card-summary-title d-flex gap-1">
+      <div className="card-summary-icone">
+        <User size ={16}/>
+      </div>
+      <div>
+          VALIDATION ADMIN
+        <h6>
+          {content?.title}
+        </h6>
+      </div>
+    </div>
     <PillsRow label="Equipe" values={content?.equipe} />
     <PillsRow label="Canal" values={content?.canal} />
   </dl>
@@ -92,7 +123,17 @@ const ValidationAdminSummary = ({ content }: { content?: ValidationAdminContent 
 
 const FormSummary = ({ content }: { content?: FormContent }) => (
   <dl className="card-summary">
-    <Form />
+    <div className="card-summary-title d-flex gap-1">
+      <div className="card-summary-icone">
+        <Form size ={16}/>
+      </div>
+      <div>
+          FORMULAIRE
+        <h6>
+          {content?.title}
+        </h6>
+      </div>
+    </div>
     <PillsRow label="Champs" values={content?.champs} />
     <PillsRow label="Formatter" values={content?.formatter} />
     <PillsRow label="Metadata" values={content?.metadata} />
@@ -102,9 +143,53 @@ const FormSummary = ({ content }: { content?: FormContent }) => (
 
 
 const initialSteps: Step[] = [
-  { id: 'step-1', cards: [{ id: 'card-1', type: CARD_TYPES.CALLHTTP, content: { title: ["Controle conformité"], requete: [""], headers: ["Authorization"], corps: ["demand"], response: ["accept: true | false"] }, schema: "" }] },
-  { id: 'step-2', cards: [{ id: 'card-2', type: CARD_TYPES.FORM, content: {}, schema: "" }, { id: 'card-3', type: CARD_TYPES.MAIL, content: {}, schema: "" }] },
-  { id: 'step-3', cards: [{ id: 'card-4', type: CARD_TYPES.CALLHTTP, content: {}, schema: "" }] },
+  {
+    id: 'step-1',
+    cards: [{
+      id: 'card-1',
+      type: CARD_TYPES.CALLHTTP,
+      content: {
+        title: ['Contrôle conformité'],
+        requete: ["POST https://conformite.example.org/daikoku/check"],
+        headers: ['Authorization'],
+        corps: ['demand'],
+        response: ['accept: true | false'],
+      },
+    }],
+  },
+  {
+    id: 'step-2', cards: [
+      {
+        id: 'card-2', type: CARD_TYPES.FORM, content: {
+          title: ['Motivation'],
+          champs: ["motivation"],
+          formatter: ["[[motivation]] (env: [[environnement]]"],
+          metadata: ["environnement"],
+          info: "Décris ton cas d'usage"
+        },
+        schema: ""
+      },
+      {
+        id: 'card-3', type: CARD_TYPES.MAIL, content: {
+          title: ['Validation par mail'],
+          to: ["rssi@example.org", "adjoint-rssi@example.org"],
+          message: ["Merci de valider l’accès à l’API Sinistres."]
+        },
+        schema: ""
+      }
+    ]
+  },
+  {
+    id: 'step-3', cards: [{
+      id: 'card-4', type: CARD_TYPES.CALLHTTP, content: {
+        title: ['Contrôle conformité'],
+        requete: ["POST https://conformite.example.org/daikoku/check"],
+        headers: ["Authorization", "X-Source"],
+        corps: ["demand", "api", "plan", "user", "team"],
+        response: ["accept: true | false"]
+      }, schema: ""
+    }]
+  },
 ];
 
 const InsertButton = ({ onClick, onDropCard }: { onClick: () => void, onDropCard: (fromStepId: string, cardId: string) => void; }) => {
@@ -290,18 +375,17 @@ const FormFlowCard = ({ card, onDelete }: FormFlowCardProps) => {
   return (
     <>
       {card.type === CARD_TYPES.CALLHTTP &&
-        <CallHttpSummary/>
-        }
+        <CallHttpSummary content={card.content} />
+      }
       {card.type === CARD_TYPES.FORM &&
-        <FormSummary/>
-        }
+        <FormSummary content={card.content} />
+      }
       {card.type === CARD_TYPES.MAIL &&
-        <MailSummary/>
-        }
+        <MailSummary content={card.content} />
+      }
       {card.type === CARD_TYPES.VALIDATION_ADMIN &&
-        <ValidationAdminSummary/>
-        }
-      {card.type}
+        <ValidationAdminSummary content={card.content} />
+      }
       <FlowCardActions
         onDelete={onDelete}
         onEdit={() => setEditable((prev) => !prev)} />
@@ -312,7 +396,7 @@ const FormFlowCard = ({ card, onDelete }: FormFlowCardProps) => {
             type="text"
             name="title"
             id="title"
-            >
+          >
           </input>
           {card.type === CARD_TYPES.CALLHTTP &&
             <div>
@@ -338,17 +422,17 @@ const FlowCardActions = ({ onDelete, onEdit }: FlowCardActions) => {
     <div className='flow-card-actions p-2 d-grid gap-2 d-flex justify-content-between'>
       <button
         onClick={onEdit}
-        className=" p-0 border-0 bg-transparent d-inline-flex flow-card-btn-close"
+        className="flow-card-action"
         aria-label="Editer"
       >
-        <Pencil stroke='white' size={18} />
+        <Pencil stroke='#29438d' size={18} />
       </button>
       <button
         onClick={onDelete}
-        className=" p-0 border-0 bg-transparent d-inline-flex flow-card-btn-close"
+        className="flow-card-action"
         aria-label="Supprimer"
       >
-        <Trash stroke='white' size={18} />
+        <Trash stroke='#29438d' size={18} />
       </button>
     </div>
   )
@@ -364,7 +448,7 @@ type FlowCardProps = {
 
 const FlowCard = ({ card, stepId, onDelete }: FlowCardProps) => {
   return (
-    <div className="flow-card p-4 bg-primary text-white rounded position-relative text-break"
+    <div className="flow-card p-2 rounded position-relative text-break"
       draggable={true}
       onDragStart={e => {
         e.dataTransfer.setData('application/json', JSON.stringify({ cardId: card.id, stepId }));
@@ -417,7 +501,7 @@ const FlowStep = ({
         onDropCard(stepId, cardId)
       }}
     >
-      <div className="d-flex flex-row gap-2 align-middle align-items-center m-2" >
+      <div className="d-flex flex-row align-middle align-items-center" >
         {canMoveLeft && (
           <button
             onClick={onMoveLeft}
