@@ -1,146 +1,10 @@
 import { Fragment, useState } from 'react';
-import { Trash, SquarePlus, SquareChevronLeft, SquareChevronRight, Flag, KeyRound, Pencil, CircleX, Globe, AtSign, User, Form } from 'lucide-react';
-//import { Form } from '@maif/react-forms';
-
-const CARD_TYPES = {
-  CALLHTTP: 'callHttp',
-  FORM: 'Form',
-  MAIL: 'Mail',
-  VALIDATION_ADMIN: 'validationAdmin',
-} as const;
-
-type CardType = (typeof CARD_TYPES)[keyof typeof CARD_TYPES];
-type Step = { id: string; cards: CardData[] };
-
-type CallHttpContent = {
-  title?: string[];
-  requete?: string[];
-  headers?: string[];
-  corps?: string[];
-  response?: string[];
-};
-
-type MailContent = {
-  title?: string[];
-  to?: string[];
-  message?: string[];
-};
-
-type ValidationAdminContent = {
-  title?: string[];
-  equipe?: string[];
-  canal?: string[];
-};
-
-type FormContent = {
-  title?: string[];
-  champs?: string[];
-  formatter?: string[];
-  metadata?: string[];
-  info?: string
-};
-
-type BaseCard = { id: string; schema?: string };
-
-type CardData =
-  | (BaseCard & { type: typeof CARD_TYPES.CALLHTTP; content?: CallHttpContent })
-  | (BaseCard & { type: typeof CARD_TYPES.FORM; content?: FormContent })
-  | (BaseCard & { type: typeof CARD_TYPES.MAIL; content?: MailContent })
-  | (BaseCard & { type: typeof CARD_TYPES.VALIDATION_ADMIN; content?: ValidationAdminContent });
-
-type PillsRowProps = {
-  label: string;
-  values?: string[];
-};
-
-const PillsRow = ({ label, values }: PillsRowProps) => (
-  <div className="card-summary-row">
-    <dt>{label}</dt>
-    <dd>
-      {values?.map((v, i) => (
-        <code key={`${v}-${i}`}>{v}</code>
-      ))}
-    </dd>
-  </div>
-);
-
-
-const CallHttpSummary = ({ content }: { content?: CallHttpContent }) => (
-  <dl className="card-summary">
-    <div className="card-summary-title d-flex gap-1">
-      <div className="card-summary-icone">
-        <Globe size ={16}/>
-      </div>
-      <div>
-          HTTP
-        <h6>
-          {content?.title}
-        </h6>
-      </div>
-    </div>
-    <PillsRow label="Requête" values={content?.requete} />
-    <PillsRow label="Headers" values={content?.headers} />
-    <PillsRow label="Corps" values={content?.corps} />
-    <PillsRow label="Réponse" values={content?.response} />
-  </dl>
-);
-
-const MailSummary = ({ content }: { content?: MailContent }) => (
-  <dl className="card-summary">
-    <div className="card-summary-title d-flex gap-1">
-      <div className="card-summary-icone">
-        <AtSign size ={16}/>
-      </div>
-      <div>
-          MAIL
-        <h6>
-          {content?.title}
-        </h6>
-      </div>
-    </div>
-    <PillsRow label="Destinataires" values={content?.to} />
-    <PillsRow label="Message" values={content?.message} />
-  </dl>
-);
-
-const ValidationAdminSummary = ({ content }: { content?: ValidationAdminContent }) => (
-  <dl className="card-summary">
-    <div className="card-summary-title d-flex gap-1">
-      <div className="card-summary-icone">
-        <User size ={16}/>
-      </div>
-      <div>
-          VALIDATION ADMIN
-        <h6>
-          {content?.title}
-        </h6>
-      </div>
-    </div>
-    <PillsRow label="Equipe" values={content?.equipe} />
-    <PillsRow label="Canal" values={content?.canal} />
-  </dl>
-);
-
-const FormSummary = ({ content }: { content?: FormContent }) => (
-  <dl className="card-summary">
-    <div className="card-summary-title d-flex gap-1">
-      <div className="card-summary-icone">
-        <Form size ={16}/>
-      </div>
-      <div>
-          FORMULAIRE
-        <h6>
-          {content?.title}
-        </h6>
-      </div>
-    </div>
-    <PillsRow label="Champs" values={content?.champs} />
-    <PillsRow label="Formatter" values={content?.formatter} />
-    <PillsRow label="Metadata" values={content?.metadata} />
-  </dl>
-);
-
-
+import { SquarePlus, Flag, KeyRound } from 'lucide-react';
+import { CARD_TYPES } from './constants/Constantes';
+import type { CardData, FlowCardProps, Step, CardType } from "./types/Types"
+import FormFlowCard from "./components/FormFlowCard"
+import TypePicker from "./components/TypePicker"
+import FlowStep from './components/FlowStep';
 
 const initialSteps: Step[] = [
   {
@@ -192,6 +56,20 @@ const initialSteps: Step[] = [
   },
 ];
 
+
+const FlowCard = ({ card, stepId, onDelete }: FlowCardProps) => {
+  return (
+    <div className="flow-card p-2 rounded position-relative text-break"
+      draggable={true}
+      onDragStart={e => {
+        e.dataTransfer.setData('application/json', JSON.stringify({ cardId: card.id, stepId }));
+        e.dataTransfer.effectAllowed = 'move';
+      }}
+    >
+      <FormFlowCard card={card} onDelete={onDelete} />
+    </div>)
+};
+
 const InsertButton = ({ onClick, onDropCard }: { onClick: () => void, onDropCard: (fromStepId: string, cardId: string) => void; }) => {
   const [isOver, setIsOver] = useState(false);
   return (
@@ -216,33 +94,6 @@ const InsertButton = ({ onClick, onDropCard }: { onClick: () => void, onDropCard
       <SquarePlus />
     </button>)
 }
-
-type TypePickerProps = {
-  onSelect: (type: CardType) => void;
-  onCancel: () => void;
-};
-
-const TypePicker = ({ onSelect, onCancel }: TypePickerProps) => (
-  <div className="d-flex flex-column gap-1 align-items-center justify-content-center flex-wrap border p-2">
-    <button
-      className="p-0 border-0 bg-transparent d-inline-flex flow-card-btn-close"
-      onClick={onCancel}
-      aria-label="Annuler"
-    >
-      <CircleX />
-    </button>
-    {Object.values(CARD_TYPES).map(t => (
-      <button
-        key={t}
-        className="btn btn-sm btn-outline-primary"
-        onClick={() => onSelect(t)}
-      >
-        {t}
-      </button>
-    ))}
-  </div>
-);
-
 
 const App = () => {
   const [steps, setSteps] = useState<Step[]>(initialSteps);
@@ -363,195 +214,5 @@ const App = () => {
     </div>
   );
 };
-
-type FormFlowCardProps = {
-  card: CardData;
-  onDelete: () => void;
-};
-
-const FormFlowCard = ({ card, onDelete }: FormFlowCardProps) => {
-  const [editable, setEditable] = useState(false);
-  //const [content, setContent] = useState({ card })
-  return (
-    <>
-      {card.type === CARD_TYPES.CALLHTTP &&
-        <CallHttpSummary content={card.content} />
-      }
-      {card.type === CARD_TYPES.FORM &&
-        <FormSummary content={card.content} />
-      }
-      {card.type === CARD_TYPES.MAIL &&
-        <MailSummary content={card.content} />
-      }
-      {card.type === CARD_TYPES.VALIDATION_ADMIN &&
-        <ValidationAdminSummary content={card.content} />
-      }
-      <FlowCardActions
-        onDelete={onDelete}
-        onEdit={() => setEditable((prev) => !prev)} />
-      {editable && (
-        <div>
-          <label htmlFor="title">Title :</label>
-          <input
-            type="text"
-            name="title"
-            id="title"
-          >
-          </input>
-          {card.type === CARD_TYPES.CALLHTTP &&
-            <div>
-              <input>
-              </input>
-              <input>
-              </input>
-            </div>
-          }
-        </div>
-      )}
-    </>
-  );
-};
-
-type FlowCardActions = {
-  onDelete: () => void;
-  onEdit: () => void;
-}
-
-const FlowCardActions = ({ onDelete, onEdit }: FlowCardActions) => {
-  return (
-    <div className='flow-card-actions p-2 d-grid gap-2 d-flex justify-content-between'>
-      <button
-        onClick={onEdit}
-        className="flow-card-action"
-        aria-label="Editer"
-      >
-        <Pencil stroke='#29438d' size={18} />
-      </button>
-      <button
-        onClick={onDelete}
-        className="flow-card-action"
-        aria-label="Supprimer"
-      >
-        <Trash stroke='#29438d' size={18} />
-      </button>
-    </div>
-  )
-}
-
-
-type FlowCardProps = {
-  card: CardData;
-  stepId: string;
-  onChangeType: (type: CardType) => void;
-  onDelete: () => void;
-};
-
-const FlowCard = ({ card, stepId, onDelete }: FlowCardProps) => {
-  return (
-    <div className="flow-card p-2 rounded position-relative text-break"
-      draggable={true}
-      onDragStart={e => {
-        e.dataTransfer.setData('application/json', JSON.stringify({ cardId: card.id, stepId }));
-        e.dataTransfer.effectAllowed = 'move';
-      }}
-    >
-      <FormFlowCard card={card} onDelete={onDelete} />
-    </div>)
-};
-
-
-
-type FlowStepProps = {
-  step: Step;
-  canMoveLeft: boolean;
-  canMoveRight: boolean;
-  onMoveLeft: () => void;
-  onMoveRight: () => void;
-  onAddCard: (type: CardType) => void;
-  onDeleteCard: (cardId: string) => void;
-  onChangeCardType: (cardId: string, type: CardType) => void;
-  onDropCard: (fromStepId: string, cardId: string) => void;
-};
-
-const FlowStep = ({
-  step, canMoveLeft, canMoveRight, onMoveLeft, onMoveRight, onAddCard, onDeleteCard, onChangeCardType, onDropCard,
-}: FlowStepProps) => {
-
-  const [isOver, setIsOver] = useState(false);
-  const [isPicking, setIsPicking] = useState(false);
-
-  return (
-    <div
-      className={`position-relative d-flex flex-column m-2 p-2 rounded ${isOver ? 'border border-primary border-2' : 'border border-2 border-transparent'
-        }`}
-      onDragOver={e => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move'
-        setIsOver(true)
-      }}
-      onDragLeave={e => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node)) setIsOver(false)
-      }}
-      onDrop={e => {
-        e.preventDefault
-        setIsOver(false)
-        const raw = e.dataTransfer.getData('application/json')
-        if (!raw) return
-        const { cardId, stepId } = JSON.parse(raw);
-        onDropCard(stepId, cardId)
-      }}
-    >
-      <div className="d-flex flex-row align-middle align-items-center" >
-        {canMoveLeft && (
-          <button
-            onClick={onMoveLeft}
-            className="btn"
-          >
-            <SquareChevronLeft />
-          </button>
-        )}
-        <div className="d-grid gap-3">
-          {step.cards.map(card => (
-            <FlowCard
-              key={card.id}
-              card={card}
-              stepId={step.id}
-              onChangeType={type => onChangeCardType(card.id, type)}
-              onDelete={() => onDeleteCard(card.id)}
-            />
-          ))}
-
-          {isPicking ? (
-            <TypePicker
-              onSelect={type => {
-                onAddCard(type);
-                setIsPicking(false);
-              }}
-              onCancel={() => setIsPicking(false)}
-            />
-          ) : (
-            <button
-              onClick={() => setIsPicking(true)}
-              className="btn btn-sm btn-outline-secondary"
-            >
-              + en parallèle
-            </button>
-          )}
-        </div>
-
-        {canMoveRight && (
-          <button
-            onClick={onMoveRight}
-            className="btn"
-          >
-            <SquareChevronRight />
-
-          </button>
-        )}
-      </div>
-    </div>
-  )
-}
-  ;
 
 export default App;
