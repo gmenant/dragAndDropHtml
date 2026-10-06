@@ -6,7 +6,7 @@ import { SquareChevronLeft, SquareChevronRight } from "lucide-react";
 
 
 const FlowStep = ({
-  step, canMoveLeft, canMoveRight, onMoveLeft, onMoveRight, onAddCard, onDeleteCard, onChangeCardType, onDropCard,
+  step, canMoveLeft, canMoveRight, onMoveLeft, onMoveRight, onAddCard, onDeleteCard, onChangeCardType, onDropCard, onFieldChange
 }: FlowStepProps) => {
 
   const [isOver, setIsOver] = useState(false);
@@ -50,6 +50,7 @@ const FlowStep = ({
               stepId={step.id}
               onChangeType={type => onChangeCardType(card.id, type)}
               onDelete={() => onDeleteCard(card.id)}
+              onFieldChange={(field, value) => onFieldChange(card.id, field, value)}
             />
           ))}
 

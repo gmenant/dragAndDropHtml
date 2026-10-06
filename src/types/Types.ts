@@ -18,6 +18,7 @@ export type FlowStepProps = {
   onDeleteCard: (cardId: string) => void;
   onChangeCardType: (cardId: string, type: CardType) => void;
   onDropCard: (fromStepId: string, cardId: string) => void;
+  onFieldChange: (cardId: string, field: CardField, value: FieldValue) => void;
 };
 
 export type CardType = (typeof CARD_TYPES)[keyof typeof CARD_TYPES];
@@ -42,7 +43,7 @@ export type ValidationAdminContent = {
   canal?: string[];
 };
 
-export type FormContent = {
+export type FormContent = { 
   title?: string[];
   champs?: string[];
   formatter?: string[];
@@ -55,12 +56,13 @@ export type BaseCard = { id: string; schema?: string };
 
 export type PillsRowProps = {
   label: string;
-  values?: string[];
+  values: string[];
 };
 
 export type FormFlowCardProps = {
   card: CardData;
   onDelete: () => void;
+  onFieldChange: (field:CardField, value:FieldValue) => void
 };
 
 export type FlowCardActionsProps = {
@@ -73,10 +75,17 @@ export type FlowCardProps = {
   stepId: string;
   onChangeType: (type: CardType) => void;
   onDelete: () => void;
+  onFieldChange: (field: CardField, value: FieldValue) => void;
 };
-
 
 export type TypePickerProps = {
   onSelect: (type: CardType) => void;
   onCancel: () => void;
 };
+
+export type CardField =
+  | 'title' | 'requete' | 'headers' | 'corps' | 'response'
+  | 'to' | 'message' | 'equipe' | 'canal'
+  | 'champs' | 'formatter' | 'metadata' | 'info';
+
+export type FieldValue = string | string[];

@@ -1,8 +1,7 @@
 import { Fragment, useState } from 'react';
 import { SquarePlus, Flag, KeyRound } from 'lucide-react';
 import { CARD_TYPES } from './constants/Constantes';
-import type { CardData, FlowCardProps, Step, CardType } from "./types/Types"
-import FormFlowCard from "./components/FormFlowCard"
+import type { CardData, Step, CardType, CardField, FieldValue } from "./types/Types"
 import TypePicker from "./components/TypePicker"
 import FlowStep from './components/FlowStep';
 
@@ -55,20 +54,6 @@ const initialSteps: Step[] = [
     }]
   },
 ];
-
-
-const FlowCard = ({ card, stepId, onDelete }: FlowCardProps) => {
-  return (
-    <div className="flow-card p-2 rounded position-relative text-break"
-      draggable={true}
-      onDragStart={e => {
-        e.dataTransfer.setData('application/json', JSON.stringify({ cardId: card.id, stepId }));
-        e.dataTransfer.effectAllowed = 'move';
-      }}
-    >
-      <FormFlowCard card={card} onDelete={onDelete} />
-    </div>)
-};
 
 const InsertButton = ({ onClick, onDropCard }: { onClick: () => void, onDropCard: (fromStepId: string, cardId: string) => void; }) => {
   const [isOver, setIsOver] = useState(false);
@@ -184,6 +169,29 @@ const App = () => {
         .filter(s => s.cards.length > 0);
     });
 
+ 
+
+const updateCardField = (
+  stepId: string,
+  cardId: string,
+  field: CardField,
+  value: FieldValue
+) =>
+  setSteps((prev) =>
+    prev.map((step) =>
+      step.id !== stepId
+        ? step
+        : {
+            ...step,
+            cards: step.cards.map((c) =>
+              c.id === cardId
+                ? ({ ...c, content: { ...c.content, [field]: value } } as CardData)
+                : c
+            ),
+          }
+    )
+  );
+
   return (
     <div className="flow-nodes d-flex flex-row flex-wrap align-items-center p-3">
       <div className='rounded-pill bg-light p-2 px-3 m-2 border border-2'>
@@ -203,6 +211,7 @@ const App = () => {
             onDeleteCard={cardId => deleteCard(step.id, cardId)}
             onChangeCardType={(cardId, type) => updateCardType(step.id, cardId, type)}
             onDropCard={(fromStepId, cardId) => moveCard(fromStepId, cardId, step.id)}
+            onFieldChange={(cardId, field, value) => updateCardField(step.id, cardId, field, value)}
           />
         </Fragment>
       ))}
