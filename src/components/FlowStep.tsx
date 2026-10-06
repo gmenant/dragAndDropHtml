@@ -14,7 +14,9 @@ const FlowStep = ({
 
   return (
     <div
-      className={`position-relative d-flex flex-column m-2 p-2 rounded ${isOver ? 'border border-primary border-2' : 'border border-2 border-transparent'
+      className={`position-relative d-flex flex-column p-2 m-2 rounded 
+        ${step.cards.length>1 ? 'border border-2 border-transparent': ''}
+        ${isOver ? 'border-2 bg-light' : ''
         }`}
       onDragOver={e => {
         e.preventDefault();
@@ -37,7 +39,7 @@ const FlowStep = ({
         {canMoveLeft && (
           <button
             onClick={onMoveLeft}
-            className="btn btn-sm"
+            className="btn btn-sm position-absolute top-50 start-0 translate-middle"
           >
             <SquareChevronLeft />
           </button>
@@ -75,7 +77,7 @@ const FlowStep = ({
         {canMoveRight && (
           <button
             onClick={onMoveRight}
-            className="btn btn-sm"
+            className="btn btn-sm position-absolute top-50 start-100 translate-middle"
           >
             <SquareChevronRight />
 
