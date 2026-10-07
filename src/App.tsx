@@ -83,30 +83,40 @@ const InsertButton = ({ onClick, onDropCard }: { onClick: () => void, onDropCard
 const App = () => {
   const [steps, setSteps] = useState<Step[]>(initialSteps);
   const [pickingAt, setPickingAt] = useState<number | null>(null);
+  const [justCreatedId, setJustCreatedId] = useState<string | null>(null);
 
   const newCard = (type: CardType = 'callHttp'): CardData => ({ id: crypto.randomUUID(), type });
 
-  const renderSlot = (index: number) =>
-    pickingAt === index ? (
+  
+
+  const renderSlot = (index: number) => (
+  <div className="position-relative d-inline-block">
+    <InsertButton
+      onClick={() => setPickingAt(index)}
+      onDropCard={(fromStepId, cardId) =>
+        moveCardToNewStep(fromStepId, cardId, index)
+      }
+    />
+
+    {pickingAt === index && (
       <TypePicker
-        onSelect={type => insertStepProcess(index, type)}
+        onSelect={(type) => insertStepProcess(index, type)}
         onCancel={() => setPickingAt(null)}
       />
-    ) : (
-      <InsertButton
-        onClick={() => setPickingAt(index)}
-        onDropCard={(fromStepId, cardId) => moveCardToNewStep(fromStepId, cardId, index)}
-      />
-    );
+    )}
+  </div>
+);
 
   const insertStepProcess = (index: number, type: CardType) => {
-    setSteps(prev => [
-      ...prev.slice(0, index),
-      { id: crypto.randomUUID(), cards: [newCard(type)] },
-      ...prev.slice(index),
-    ])
-    setPickingAt(null)
-  };
+  const card = newCard(type);
+  setJustCreatedId(card.id);
+  setSteps(prev => [
+    ...prev.slice(0, index),
+    { id: crypto.randomUUID(), cards: [card] },
+    ...prev.slice(index),
+  ]);
+  setPickingAt(null);
+};
 
   const updateCardType = (stepId: string, cardId: string, type: CardType) =>
     setSteps(prev =>
@@ -126,12 +136,15 @@ const App = () => {
       return next;
     });
 
-  const addCard = (stepId: string, type: CardType) =>
-    setSteps(prev =>
-      prev.map(s =>
-        s.id === stepId ? { ...s, cards: [...s.cards, newCard(type)] } : s
-      )
-    );
+  const addCard = (stepId: string, type: CardType) => {
+  const card = newCard(type);
+  setJustCreatedId(card.id);
+  setSteps(prev =>
+    prev.map(s =>
+      s.id === stepId ? { ...s, cards: [...s.cards, card] } : s
+    )
+  );
+};
 
   const deleteCard = (stepId: string, cardId: string) =>
     setSteps(prev =>
@@ -212,6 +225,7 @@ const updateCardField = (
             onChangeCardType={(cardId, type) => updateCardType(step.id, cardId, type)}
             onDropCard={(fromStepId, cardId) => moveCard(fromStepId, cardId, step.id)}
             onFieldChange={(cardId, field, value) => updateCardField(step.id, cardId, field, value)}
+            justCreatedId={justCreatedId}
           />
         </Fragment>
       ))}

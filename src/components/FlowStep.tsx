@@ -6,7 +6,7 @@ import { SquareChevronLeft, SquareChevronRight } from "lucide-react";
 
 
 const FlowStep = ({
-  step, canMoveLeft, canMoveRight, onMoveLeft, onMoveRight, onAddCard, onDeleteCard, onChangeCardType, onDropCard, onFieldChange
+  step, canMoveLeft, canMoveRight, onMoveLeft, onMoveRight, onAddCard, onDeleteCard, onChangeCardType, onDropCard, onFieldChange, justCreatedId
 }: FlowStepProps) => {
 
   const [isOver, setIsOver] = useState(false);
@@ -15,7 +15,7 @@ const FlowStep = ({
   return (
     <div
       className={`position-relative d-flex flex-column p-2 m-2 rounded 
-        ${step.cards.length>1 ? 'border border-2 border-transparent': ''}
+        ${step.cards.length > 1 ? 'border border-2 border-transparent' : ''}
         ${isOver ? 'border-2 bg-light' : ''
         }`}
       onDragOver={e => {
@@ -41,7 +41,7 @@ const FlowStep = ({
             onClick={onMoveLeft}
             className="btn btn-sm position-absolute top-50 start-0 translate-middle"
           >
-            <SquareChevronLeft />
+            <SquareChevronLeft fill='white' />
           </button>
         )}
         <div className="d-grid gap-3">
@@ -53,25 +53,27 @@ const FlowStep = ({
               onChangeType={type => onChangeCardType(card.id, type)}
               onDelete={() => onDeleteCard(card.id)}
               onFieldChange={(field, value) => onFieldChange(card.id, field, value)}
+              startEditing={card.id === justCreatedId}
             />
           ))}
-
-          {isPicking ? (
-            <TypePicker
-              onSelect={type => {
-                onAddCard(type);
-                setIsPicking(false);
-              }}
-              onCancel={() => setIsPicking(false)}
-            />
-          ) : (
+          <div className="position-relative d-inline-block">
             <button
               onClick={() => setIsPicking(true)}
               className="btn btn-sm btn-outline-secondary"
             >
               + en parallèle
             </button>
-          )}
+
+            {isPicking && (
+              <TypePicker
+                onSelect={(type) => {
+                  onAddCard(type);
+                  setIsPicking(false);
+                }}
+                onCancel={() => setIsPicking(false)}
+              />
+            )}
+          </div>
         </div>
 
         {canMoveRight && (
@@ -79,7 +81,7 @@ const FlowStep = ({
             onClick={onMoveRight}
             className="btn btn-sm position-absolute top-50 start-100 translate-middle"
           >
-            <SquareChevronRight />
+            <SquareChevronRight  fill='white'/>
 
           </button>
         )}

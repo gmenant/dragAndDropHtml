@@ -4,7 +4,8 @@ import { CARD_TYPES } from "../constants/Constantes";
 
 
 const TypePicker = ({ onSelect, onCancel }: TypePickerProps) => (
-  <div className="d-flex flex-column gap-1 align-items-center justify-content-center flex-wrap border p-2">
+  <div   className="position-absolute top-100 start-50 translate-middle-x mt-1 bg-white shadow rounded border p-2 d-flex flex-column gap-1 align-items-center"
+  style={{ zIndex: 1000 }}>
     <button
       className="p-0 border-0 bg-transparent d-inline-flex flow-card-btn-close"
       onClick={onCancel}

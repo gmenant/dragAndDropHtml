@@ -19,7 +19,7 @@ export type FlowStepProps = {
   onChangeCardType: (cardId: string, type: CardType) => void;
   onDropCard: (fromStepId: string, cardId: string) => void;
   onFieldChange: (cardId: string, field: CardField, value: FieldValue) => void;
-};
+  justCreatedId: string | null;};
 
 export type CardType = (typeof CARD_TYPES)[keyof typeof CARD_TYPES];
 
@@ -63,6 +63,7 @@ export type FormFlowCardProps = {
   card: CardData;
   onDelete: () => void;
   onFieldChange: (field:CardField, value:FieldValue) => void
+  startEditing?: boolean;
 };
 
 export type FlowCardActionsProps = {
@@ -76,6 +77,7 @@ export type FlowCardProps = {
   onChangeType: (type: CardType) => void;
   onDelete: () => void;
   onFieldChange: (field: CardField, value: FieldValue) => void;
+  startEditing?: boolean;
 };
 
 export type TypePickerProps = {
