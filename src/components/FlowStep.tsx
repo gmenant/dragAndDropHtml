@@ -14,9 +14,9 @@ const FlowStep = ({
 
   return (
     <div
-      className={`position-relative d-flex flex-column p-2 m-2 rounded 
-        ${step.cards.length > 1 ? 'border border-2 border-transparent' : ''}
-        ${isOver ? 'border-2 bg-light' : ''
+      className={`position-relative d-flex flex-column p-3 m-2 rounded 
+        ${step.cards.length > 1 ? 'border border-2 border-transparent' : 'border border-2 border-transparent'}
+        ${isOver ? 'border-2 bg-light border-success' : ''
         }`}
       onDragOver={e => {
         e.preventDefault();
@@ -44,7 +44,7 @@ const FlowStep = ({
             <SquareChevronLeft fill='white' />
           </button>
         )}
-        <div className="d-grid gap-3">
+        <div className="d-grid gap-2">
           {step.cards.map(card => (
             <FlowCard
               key={card.id}

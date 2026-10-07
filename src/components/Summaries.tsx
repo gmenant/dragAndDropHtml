@@ -1,19 +1,7 @@
 import type {PillsRowProps, CallHttpContent, MailContent,ValidationAdminContent, FormContent } from "./../types/Types";
-import {Globe,AtSign,User,Form} from "lucide-react"
 
 const CallHttpSummary = ({ content }: { content?: CallHttpContent }) => (
   <dl className="card-summary">
-    <div className="card-summary-title d-flex gap-1">
-      <div className="card-summary-icone">
-        <Globe size ={16}/>
-      </div>
-      <div>
-          HTTP
-        <h6>
-          {content?.title}
-        </h6>
-      </div>
-    </div>
     <PillsRow label="Requête" values={content?.requete ?? []} />
     <PillsRow label="Headers" values={content?.headers ?? []} />
     <PillsRow label="Corps" values={content?.corps ?? []} />
@@ -23,17 +11,6 @@ const CallHttpSummary = ({ content }: { content?: CallHttpContent }) => (
 
 const MailSummary = ({ content }: { content?: MailContent }) => (
   <dl className="card-summary">
-    <div className="card-summary-title d-flex gap-1">
-      <div className="card-summary-icone">
-        <AtSign size ={16}/>
-      </div>
-      <div>
-          MAIL
-        <h6>
-          {content?.title}
-        </h6>
-      </div>
-    </div>
     <PillsRow label="Destinataires" values={content?.to ?? []} />
     <PillsRow label="Message" values={content?.message ?? []} />
   </dl>
@@ -41,17 +18,6 @@ const MailSummary = ({ content }: { content?: MailContent }) => (
 
 const ValidationAdminSummary = ({ content }: { content?: ValidationAdminContent }) => (
   <dl className="card-summary">
-    <div className="card-summary-title d-flex gap-1">
-      <div className="card-summary-icone">
-        <User size ={16}/>
-      </div>
-      <div>
-          VALIDATION ADMIN
-        <h6>
-          {content?.title}
-        </h6>
-      </div>
-    </div>
     <PillsRow label="Equipe" values={content?.equipe ?? []} />
     <PillsRow label="Canal" values={content?.canal ?? []} />
   </dl>
@@ -59,17 +25,6 @@ const ValidationAdminSummary = ({ content }: { content?: ValidationAdminContent 
 
 const FormSummary = ({ content }: { content?: FormContent }) => (
   <dl className="card-summary">
-    <div className="card-summary-title d-flex gap-1">
-      <div className="card-summary-icone">
-        <Form size ={16}/>
-      </div>
-      <div>
-          FORMULAIRE
-        <h6>
-          {content?.title}
-        </h6>
-      </div>
-    </div>
     <PillsRow label="Champs" values={content?.champs ?? []} />
     <PillsRow label="Formatter" values={content?.formatter ?? []} />
     <PillsRow label="Metadata" values={content?.metadata ?? []} />

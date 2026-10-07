@@ -2,32 +2,20 @@
 import { useState } from "react";
 import type { FormFlowCardProps } from "./../types/Types"
 import { CARD_TYPES } from "../constants/Constantes";
-import { CallHttpSummary, FormSummary, MailSummary, ValidationAdminSummary } from "../components/Summaries"
 import FlowCardActions from "./FlowCardActions";
 
 const FormFlowCard = ({ card, onDelete, onFieldChange, startEditing = false }: FormFlowCardProps) => {
   const [editable, setEditable] = useState(startEditing);
   return (
     <>
-      {card.type === CARD_TYPES.CALLHTTP &&
-        <CallHttpSummary content={card.content} />
-      }
-      {card.type === CARD_TYPES.FORM &&
-        <FormSummary content={card.content} />
-      }
-      {card.type === CARD_TYPES.MAIL &&
-        <MailSummary content={card.content} />
-      }
-      {card.type === CARD_TYPES.VALIDATION_ADMIN &&
-        <ValidationAdminSummary content={card.content} />
-      }
+      
       <FlowCardActions
         onDelete={onDelete}
         onEdit={() => setEditable((prev) => !prev)} />
       {editable && (
-        <div className="form-flow-card d-flex flex-column rounded-4 p-2 mb-3 gap-1">
+        <div className="form-flow-card d-flex flex-column rounded-4 p-2 mb-3">
           <label htmlFor="title">Title :</label>
-         <input
+          <input
             type="text"
             className="form-control form-control-sm"
             id={`title-${card.id}`}
@@ -55,8 +43,8 @@ const FormFlowCard = ({ card, onDelete, onFieldChange, startEditing = false }: F
                 id="Headers"
                 value={card.content?.headers?.join(', ') ?? ''}
                 onChange={(e) =>
-                onFieldChange('headers', e.target.value.split(',').map((s) => s.trim()))
-              }
+                  onFieldChange('headers', e.target.value.split(',').map((s) => s.trim()))
+                }
               >
               </input>
             </>

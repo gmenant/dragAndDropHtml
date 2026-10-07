@@ -14,32 +14,32 @@ body {
   fill: #f7f9fb;
 }
 
-.flow-nodes{
+.flow-nodes {
   width: 100vw;
 }
 
 .flow-card {
   border-radius: 25%;
-  border: solid 1px lightgrey  
+  border: solid 1px lightgrey
 }
 
-.flow-step-add{
-  color: var(--bs-secondary); 
+.flow-step-add {
+  color: var(--bs-secondary);
   line-height: 1;
 }
 
 .flow-step-add:hover {
-  color: var(--bs-success);   
+  color: var(--bs-success);
   transition: color 0.15s ease;
 }
 
 .flow-card-btn-close {
-  color: var(--bs-secondary); 
+  color: var(--bs-secondary);
   line-height: 1;
 }
 
 .flow-card-btn-close:hover {
-  color: var(--bs-danger);   
+  color: var(--bs-danger);
   transition: color 0.15s ease;
 }
 
@@ -47,8 +47,8 @@ body {
   border-top: 1px solid #e6e6e6;
 }
 
-input{
-  width:150px;
+input {
+  width: 150px;
 }
 
 .card-summary {
@@ -65,7 +65,8 @@ input{
 }
 
 .card-summary dt {
-  flex: 0 0 5.5rem;          /* largeur fixe pour aligner les labels */
+  flex: 0 0 5.5rem;
+  /* largeur fixe pour aligner les labels */
   font-weight: 600;
   color: #6b7280;
   font-size: 12px;
@@ -74,7 +75,8 @@ input{
 .card-summary dd {
   margin: 0;
   display: flex;
-  flex-wrap: wrap;           /* les pills passent à la ligne si besoin */
+  flex-wrap: wrap;
+  /* les pills passent à la ligne si besoin */
   gap: 0.5rem;
   font-size: 12px;
 }
@@ -87,7 +89,7 @@ input{
   font-size: 0.7rem;
 }
 
-.flow-card-action{
+.flow-card-action {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -100,11 +102,11 @@ input{
   color: #29438d;
 }
 
-.card-summary{
+.card-summary {
   font-size: 12px;
 }
 
-.card-summary-title{
+.card-summary-title {
   font-weight: 700;
   font-size: 14.5px;
   line-height: 1.3;
@@ -125,4 +127,17 @@ input{
 
 .form-flow-card {
   background-color: #f1f3f5;
+}
+
+.cursor-pointer {
+  cursor: move;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+
+.cursor-pointer:active {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
 }
