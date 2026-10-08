@@ -63,7 +63,7 @@ const CardHeader = ({ card, stepId }: CardHeaderProps) => {
 import { GripVertical } from "lucide-react"
 
 
-const FlowCard = ({ card, stepId, onDelete, onFieldChange, startEditing }: FlowCardProps) => {
+const FlowCard = ({ card, stepId, onDelete, onFieldChange, startEditing, processStarted }: FlowCardProps) => {
   return (
     <div className="flow-card p-2 rounded text-break">
       <div className='d-flex flex-column column-gap-2'>
@@ -81,7 +81,7 @@ const FlowCard = ({ card, stepId, onDelete, onFieldChange, startEditing }: FlowC
           <ValidationAdminSummary content={card.content} />
         }
       </div>
-      <FormFlowCard card={card} onDelete={onDelete} onFieldChange={onFieldChange} startEditing={startEditing} />
+      <FormFlowCard card={card} onDelete={onDelete} onFieldChange={onFieldChange} startEditing={startEditing} processStarted= {processStarted}/>
     </div>)
 };
 

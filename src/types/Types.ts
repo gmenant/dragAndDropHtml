@@ -21,6 +21,7 @@ export type FlowStepProps = {
   onFieldChange: (cardId: string, field: CardField, value: FieldValue) => void;
   justCreatedId: string | null;
   verticalWorkflow: boolean;
+  processStarted: boolean
 };
 
 export type CardType = (typeof CARD_TYPES)[keyof typeof CARD_TYPES];
@@ -53,7 +54,7 @@ export type FormContent = {
   info?: string
 };
 
-export type BaseCard = { id: string; schema?: string };
+export type BaseCard = { id: string; schema?: string, succeded: boolean, failed: boolean  };
 
 
 export type PillsRowProps = {
@@ -66,6 +67,7 @@ export type FormFlowCardProps = {
   onDelete: () => void;
   onFieldChange: (field:CardField, value:FieldValue) => void
   startEditing?: boolean;
+  processStarted: boolean
 };
 
 export type FlowCardActionsProps = {
@@ -80,6 +82,7 @@ export type FlowCardProps = {
   onDelete: () => void;
   onFieldChange: (field: CardField, value: FieldValue) => void;
   startEditing?: boolean;
+  processStarted: boolean
 };
 
 export type TypePickerProps = {

@@ -17,7 +17,8 @@ const FlowStep = ({
   onDropCard, 
   onFieldChange, 
   justCreatedId,
-  verticalWorkflow
+  verticalWorkflow,
+  processStarted
 }: FlowStepProps) => {
 
   const [isOver, setIsOver] = useState(false);
@@ -67,16 +68,18 @@ const FlowStep = ({
               onDelete={() => onDeleteCard(card.id)}
               onFieldChange={(field, value) => onFieldChange(card.id, field, value)}
               startEditing={card.id === justCreatedId}
+              processStarted={processStarted}
             />
           ))}
           <div className="position-relative d-inline-block">
+            {!processStarted && 
             <button
               onClick={() => setIsPicking(true)}
               className="btn btn-sm btn-outline-secondary"
             >
               + en parallèle
             </button>
-
+            }
             {isPicking && (
               <TypePicker
                 onSelect={(type) => {
@@ -95,7 +98,6 @@ const FlowStep = ({
             className={`btn btn-sm  translate-middle ${verticalWorkflow ? 'position-absolute top-50 start-100 ': 'position-absolute top-100 start-50 '}`}
           >
             {verticalWorkflow ? <SquareChevronRight fill='white' /> : <SquareChevronDown fill='white' />}
-            
           </button>
         )}
       </div>

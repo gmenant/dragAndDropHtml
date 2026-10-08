@@ -4,14 +4,20 @@ import type { FormFlowCardProps } from "./../types/Types"
 import { CARD_TYPES } from "../constants/Constantes";
 import FlowCardActions from "./FlowCardActions";
 
-const FormFlowCard = ({ card, onDelete, onFieldChange, startEditing = false }: FormFlowCardProps) => {
+const FormFlowCard = ({ card, onDelete, onFieldChange, startEditing = false, processStarted }: FormFlowCardProps) => {
   const [editable, setEditable] = useState(startEditing);
   return (
     <>
-      
-      <FlowCardActions
-        onDelete={onDelete}
-        onEdit={() => setEditable((prev) => !prev)} />
+      {processStarted ?
+
+        card.succeded ? 
+        <span className="badge rounded-pill text-bg-success">Success</span> : 
+        card.failed ? <span className="badge rounded-pill text-bg-danger">Danger</span> : <span className="badge rounded-pill text-bg-light">Light</span>
+        : <FlowCardActions
+          onDelete={onDelete}
+          onEdit={() => setEditable((prev) => !prev)}
+        />
+      }
       {editable && (
         <div className="form-flow-card d-flex flex-column rounded-2 p-2 mb-3">
           <label htmlFor="title">Title :</label>

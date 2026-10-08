@@ -5,6 +5,8 @@ import type { CardData, Step, CardType, CardField, FieldValue } from "./types/Ty
 import TypePicker from "./components/TypePicker"
 import FlowStep from './components/FlowStep';
 
+const processStarted = true;
+
 const initialSteps: Step[] = [
   {
     id: 'step-1',
@@ -18,6 +20,8 @@ const initialSteps: Step[] = [
         corps: ['demand'],
         response: ['accept: true | false'],
       },
+      succeded: false,
+      failed: false
     }],
   },
   {
@@ -30,7 +34,9 @@ const initialSteps: Step[] = [
           metadata: ["environnement"],
           info: "Décris ton cas d'usage"
         },
-        schema: ""
+        schema: "",
+        succeded: true,
+        failed: false
       },
       {
         id: 'card-3', type: CARD_TYPES.MAIL, content: {
@@ -38,7 +44,9 @@ const initialSteps: Step[] = [
           to: ["rssi@example.org", "adjoint-rssi@example.org"],
           message: ["Merci de valider l’accès à l’API Sinistres."]
         },
-        schema: ""
+        schema: "",
+        succeded: false,
+        failed: true
       }
     ]
   },
@@ -50,7 +58,9 @@ const initialSteps: Step[] = [
         headers: ["Authorization", "X-Source"],
         corps: ["demand", "api", "plan", "user", "team"],
         response: ["accept: true | false"]
-      }, schema: ""
+      }, schema: "",
+        succeded: false,
+        failed: false
     }]
   },
 ];
@@ -86,7 +96,12 @@ const App = () => {
   const [justCreatedId, setJustCreatedId] = useState<string | null>(null);
   const [verticalWorkflow, setVerticalWorkflow] = useState<boolean>(true)
 
-  const newCard = (type: CardType = 'callHttp'): CardData => ({ id: crypto.randomUUID(), type });
+  const newCard = (type: CardType = 'callHttp'): CardData => ({ 
+    id: crypto.randomUUID(), 
+    type, 
+    succeded: false,
+    failed: false 
+  });
 
   const renderSlot = (index: number) => (
     <div className="render-slot position-relative d-flex justify-content-center align-self-stretch">
@@ -228,6 +243,7 @@ const updateCardField = (
             onFieldChange={(cardId, field, value) => updateCardField(step.id, cardId, field, value)}
             justCreatedId={justCreatedId}
             verticalWorkflow={verticalWorkflow}
+            processStarted={processStarted}
           />
         </Fragment>
       ))}
