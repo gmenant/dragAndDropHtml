@@ -13,7 +13,7 @@ const FormFlowCard = ({ card, onDelete, onFieldChange, startEditing = false }: F
         onDelete={onDelete}
         onEdit={() => setEditable((prev) => !prev)} />
       {editable && (
-        <div className="form-flow-card d-flex flex-column rounded-4 p-2 mb-3">
+        <div className="form-flow-card d-flex flex-column rounded-2 p-2 mb-3">
           <label htmlFor="title">Title :</label>
           <input
             type="text"

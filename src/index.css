@@ -23,13 +23,7 @@ body {
   border: solid 1px lightgrey
 }
 
-.flow-step-add {
-  color: var(--bs-secondary);
-  line-height: 1;
-}
-
 .flow-step-add:hover {
-  color: var(--bs-success);
   transition: color 0.15s ease;
 }
 

@@ -82,7 +82,6 @@ const FlowStep = ({
             className="btn btn-sm position-absolute top-50 start-100 translate-middle"
           >
             <SquareChevronRight  fill='white'/>
-
           </button>
         )}
       </div>

@@ -60,8 +60,7 @@ const InsertButton = ({ onClick, onDropCard }: { onClick: () => void, onDropCard
   return (
     <button
       onClick={onClick}
-      className={`flow-step-add border-0 bg-transparent ${isOver ? 'btn' : 'btn-success'} `}
-      onDragOver={e => {
+      className={`flow-step-add border-0 h-100 d-flex align-items-center justify-content-center rounded-3   ${isOver ? 'bg-success-subtle' : 'bg-transparent'}`}      onDragOver={e => {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
         setIsOver(true);
@@ -76,7 +75,7 @@ const InsertButton = ({ onClick, onDropCard }: { onClick: () => void, onDropCard
         onDropCard(stepId, cardId);
       }}
     >
-      <SquarePlus />
+      <SquarePlus/>
     </button>)
 }
 
@@ -87,10 +86,8 @@ const App = () => {
 
   const newCard = (type: CardType = 'callHttp'): CardData => ({ id: crypto.randomUUID(), type });
 
-  
-
   const renderSlot = (index: number) => (
-  <div className="position-relative d-inline-block">
+  <div className="position-relative d-flex align-self-stretch">
     <InsertButton
       onClick={() => setPickingAt(index)}
       onDropCard={(fromStepId, cardId) =>
