@@ -23,8 +23,20 @@ body {
   border: solid 1px lightgrey
 }
 
+.flow-step-horizontal{
+  width:400px
+}
+
+.flow-step-vertical{
+  width:900px
+}
+
 .flow-step-add:hover {
   transition: color 0.15s ease;
+}
+
+.render-slot:hover {
+  background-color: var(--bs-success-bg-subtle);
 }
 
 .flow-card-btn-close {

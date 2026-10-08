@@ -55,12 +55,13 @@ const initialSteps: Step[] = [
   },
 ];
 
-const InsertButton = ({ onClick, onDropCard }: { onClick: () => void, onDropCard: (fromStepId: string, cardId: string) => void; }) => {
+const InsertButton = ({ onClick, onDropCard}: { onClick: () => void, onDropCard: (fromStepId: string, cardId: string) => void; }) => {
   const [isOver, setIsOver] = useState(false);
   return (
     <button
       onClick={onClick}
-      className={`flow-step-add border-0 h-100 d-flex align-items-center justify-content-center rounded-3   ${isOver ? 'bg-success-subtle' : 'bg-transparent'}`}      onDragOver={e => {
+      className={`flow-step-add border-0 ${isOver ? 'bg-success-subtle' : 'bg-transparent'}`}      
+      onDragOver={e => {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
         setIsOver(true);
@@ -83,26 +84,26 @@ const App = () => {
   const [steps, setSteps] = useState<Step[]>(initialSteps);
   const [pickingAt, setPickingAt] = useState<number | null>(null);
   const [justCreatedId, setJustCreatedId] = useState<string | null>(null);
+  const [verticalWorkflow, setVerticalWorkflow] = useState<boolean>(true)
 
   const newCard = (type: CardType = 'callHttp'): CardData => ({ id: crypto.randomUUID(), type });
 
   const renderSlot = (index: number) => (
-  <div className="position-relative d-flex align-self-stretch">
-    <InsertButton
-      onClick={() => setPickingAt(index)}
-      onDropCard={(fromStepId, cardId) =>
-        moveCardToNewStep(fromStepId, cardId, index)
-      }
-    />
-
-    {pickingAt === index && (
-      <TypePicker
-        onSelect={(type) => insertStepProcess(index, type)}
-        onCancel={() => setPickingAt(null)}
+    <div className="render-slot position-relative d-flex justify-content-center align-self-stretch">
+      <InsertButton
+        onClick={() => setPickingAt(index)}
+        onDropCard={(fromStepId, cardId) =>
+          moveCardToNewStep(fromStepId, cardId, index)
+        }
       />
-    )}
-  </div>
-);
+      {pickingAt === index && (
+        <TypePicker
+          onSelect={(type) => insertStepProcess(index, type)}
+          onCancel={() => setPickingAt(null)}
+        />
+      )}
+    </div>
+  );
 
   const insertStepProcess = (index: number, type: CardType) => {
   const card = newCard(type);
@@ -179,8 +180,6 @@ const App = () => {
         .filter(s => s.cards.length > 0);
     });
 
- 
-
 const updateCardField = (
   stepId: string,
   cardId: string,
@@ -203,7 +202,12 @@ const updateCardField = (
   );
 
   return (
-    <div className="flow-nodes d-flex flex-row flex-wrap align-items-center p-3">
+    <div className={`flow-nodes d-flex  flex-wrap align-items-center p-3 ${verticalWorkflow ? 'flex-row': 'flex-column'}`}>
+      <button 
+      className='btn btn-primary'
+      onClick={() => setVerticalWorkflow(!verticalWorkflow)}>
+        vertical/horizontal
+      </button>
       <div className='rounded-pill bg-light p-2 px-3 m-2 border border-2'>
         <Flag size={"15px"} />
         Demande
@@ -223,6 +227,7 @@ const updateCardField = (
             onDropCard={(fromStepId, cardId) => moveCard(fromStepId, cardId, step.id)}
             onFieldChange={(cardId, field, value) => updateCardField(step.id, cardId, field, value)}
             justCreatedId={justCreatedId}
+            verticalWorkflow={verticalWorkflow}
           />
         </Fragment>
       ))}

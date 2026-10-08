@@ -19,7 +19,9 @@ export type FlowStepProps = {
   onChangeCardType: (cardId: string, type: CardType) => void;
   onDropCard: (fromStepId: string, cardId: string) => void;
   onFieldChange: (cardId: string, field: CardField, value: FieldValue) => void;
-  justCreatedId: string | null;};
+  justCreatedId: string | null;
+  verticalWorkflow: boolean;
+};
 
 export type CardType = (typeof CARD_TYPES)[keyof typeof CARD_TYPES];
 

@@ -65,7 +65,7 @@ import { GripVertical } from "lucide-react"
 
 const FlowCard = ({ card, stepId, onDelete, onFieldChange, startEditing }: FlowCardProps) => {
   return (
-    <div className="flow-card p-2 rounded position-relative text-break">
+    <div className="flow-card p-2 rounded text-break">
       <div className='d-flex flex-column column-gap-2'>
         <CardHeader card={card} stepId={stepId} />
         {card.type === CARD_TYPES.CALLHTTP &&
