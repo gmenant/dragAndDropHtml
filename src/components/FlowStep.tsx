@@ -49,7 +49,7 @@ const FlowStep = ({
       }}
     >
       <div className="d-flex flex-row align-middle align-items-center w-100" >
-        {canMoveLeft && (
+        {!processStarted && canMoveLeft && (
           <button
             onClick={onMoveLeft}
             className={`btn btn-sm  translate-middle ${verticalWorkflow ? 'position-absolute top-50 start-0': 'position-absolute top-0 start-50'}`}
@@ -92,7 +92,7 @@ const FlowStep = ({
           </div>
         </div>
 
-        {canMoveRight && (
+        {!processStarted && canMoveRight && (
           <button
             onClick={onMoveRight}
             className={`btn btn-sm  translate-middle ${verticalWorkflow ? 'position-absolute top-50 start-100 ': 'position-absolute top-100 start-50 '}`}

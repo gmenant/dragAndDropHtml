@@ -5,7 +5,6 @@ import type { CardData, Step, CardType, CardField, FieldValue } from "./types/Ty
 import TypePicker from "./components/TypePicker"
 import FlowStep from './components/FlowStep';
 
-const processStarted = true;
 
 const initialSteps: Step[] = [
   {
@@ -91,6 +90,7 @@ const App = () => {
   const [pickingAt, setPickingAt] = useState<number | null>(null);
   const [justCreatedId, setJustCreatedId] = useState<string | null>(null);
   const [verticalWorkflow, setVerticalWorkflow] = useState<boolean>(true)
+  const [processStarted, setActiveProcess] = useState(true)
 
   const newCard = (type: CardType = 'callHttp'): CardData => ({ 
     id: crypto.randomUUID(), 
@@ -211,19 +211,31 @@ const updateCardField = (
   );
 
   return (
+    <div>
+      <div className='d-grid gap-2 d-md-flex p-2'>
+        <button 
+          className='btn btn-primary'
+          onClick={() => setVerticalWorkflow(!verticalWorkflow)}>
+          {verticalWorkflow ? 'passer a verticale' : 'passer à l\'horizontal'}
+        </button>
+          <button 
+          type="button" 
+          className="btn btn-secondary" 
+          aria-pressed="true"
+          onClick={() => setActiveProcess(!processStarted)}
+          >
+          {processStarted ? 'desactiver process' : 'activer process'}
+        </button>
+      </div>
     <div className={`flow-nodes d-flex  flex-wrap align-items-center p-3 ${verticalWorkflow ? 'flex-row': 'flex-column'}`}>
-      <button 
-      className='btn btn-primary'
-      onClick={() => setVerticalWorkflow(!verticalWorkflow)}>
-        vertical/horizontal
-      </button>
-      <div className='rounded-pill bg-light p-2 px-3 m-2 border border-2'>
+      <div className={`badge rounded-pill p-2 px-3 m-2 border border-2 ${!processStarted? 'bg-light text-black' : 'bg-success p-2 text-white bg-opacity-75'}`}>
         <Flag size={"15px"} />
         Demande
       </div>
       {steps.map((step, index) => (
         <Fragment key={step.id}>
-          {renderSlot(index)}
+          
+          {!processStarted && renderSlot(index)}
           <FlowStep
             step={step}
             canMoveLeft={index > 0}
@@ -241,11 +253,12 @@ const updateCardField = (
           />
         </Fragment>
       ))}
-      {renderSlot(steps.length)}
+      {!processStarted && renderSlot(steps.length)}
       <div className='rounded-pill bg-light p-2 px-3 m-2 border border-2'>
         <KeyRound size={"15px"} />
         Clé API générée
       </div>
+    </div>
     </div>
   );
 };
