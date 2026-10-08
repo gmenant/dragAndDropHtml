@@ -1,4 +1,4 @@
-import { CARD_TYPES } from "../constants/Constantes";
+import { CARD_TYPES, CARD_STATUS } from "../constants/Constantes";
 
 export type CardData =
   | (BaseCard & { type: typeof CARD_TYPES.CALLHTTP; content?: CallHttpContent })
@@ -54,9 +54,6 @@ export type FormContent = {
   info?: string
 };
 
-export type BaseCard = { id: string; schema?: string, succeded: boolean, failed: boolean  };
-
-
 export type PillsRowProps = {
   label: string;
   values: string[];
@@ -96,3 +93,8 @@ export type CardField =
   | 'champs' | 'formatter' | 'metadata' | 'info';
 
 export type FieldValue = string | string[];
+
+export type CardStatus = (typeof CARD_STATUS)[keyof typeof CARD_STATUS];
+
+export type BaseCard = { id: string; schema?: string; status?: CardStatus };
+

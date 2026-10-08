@@ -4,3 +4,9 @@ export const CARD_TYPES = {
   MAIL: 'Mail',
   VALIDATION_ADMIN: 'validationAdmin',
 } as const;
+
+export const CARD_STATUS = {
+  PENDING: 'pending',
+  SUCCESS: 'success',
+  FAILED: 'failed',
+} as const;

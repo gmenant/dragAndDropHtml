@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import type { FormFlowCardProps } from "./../types/Types"
-import { CARD_TYPES } from "../constants/Constantes";
+import { CARD_TYPES, CARD_STATUS } from "../constants/Constantes";
 import FlowCardActions from "./FlowCardActions";
 
 const FormFlowCard = ({ card, onDelete, onFieldChange, startEditing = false, processStarted }: FormFlowCardProps) => {
@@ -9,10 +9,14 @@ const FormFlowCard = ({ card, onDelete, onFieldChange, startEditing = false, pro
   return (
     <>
       {processStarted ?
-
-        card.succeded ? 
-        <span className="badge rounded-pill text-bg-success">Success</span> : 
-        card.failed ? <span className="badge rounded-pill text-bg-danger">Danger</span> : <span className="badge rounded-pill text-bg-light">Light</span>
+        <>
+          {card.status === CARD_STATUS.SUCCESS &&
+            <span className="badge rounded-pill text-bg-success">Success</span>}
+          {card.status === CARD_STATUS.FAILED &&
+            <span className="badge rounded-pill text-bg-danger">Failed</span>}
+          {card.status === CARD_STATUS.PENDING &&
+            <span className="badge rounded-pill text-bg-light">Pending</span>}
+        </>
         : <FlowCardActions
           onDelete={onDelete}
           onEdit={() => setEditable((prev) => !prev)}

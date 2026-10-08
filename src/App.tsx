@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react';
 import { SquarePlus, Flag, KeyRound } from 'lucide-react';
-import { CARD_TYPES } from './constants/Constantes';
+import { CARD_TYPES, CARD_STATUS } from './constants/Constantes';
 import type { CardData, Step, CardType, CardField, FieldValue } from "./types/Types"
 import TypePicker from "./components/TypePicker"
 import FlowStep from './components/FlowStep';
@@ -20,8 +20,7 @@ const initialSteps: Step[] = [
         corps: ['demand'],
         response: ['accept: true | false'],
       },
-      succeded: false,
-      failed: false
+      status: CARD_STATUS.SUCCESS
     }],
   },
   {
@@ -35,8 +34,7 @@ const initialSteps: Step[] = [
           info: "Décris ton cas d'usage"
         },
         schema: "",
-        succeded: true,
-        failed: false
+        status: CARD_STATUS.PENDING
       },
       {
         id: 'card-3', type: CARD_TYPES.MAIL, content: {
@@ -45,8 +43,7 @@ const initialSteps: Step[] = [
           message: ["Merci de valider l’accès à l’API Sinistres."]
         },
         schema: "",
-        succeded: false,
-        failed: true
+        status: CARD_STATUS.PENDING
       }
     ]
   },
@@ -59,8 +56,7 @@ const initialSteps: Step[] = [
         corps: ["demand", "api", "plan", "user", "team"],
         response: ["accept: true | false"]
       }, schema: "",
-        succeded: false,
-        failed: false
+        status: CARD_STATUS.PENDING
     }]
   },
 ];
@@ -98,9 +94,7 @@ const App = () => {
 
   const newCard = (type: CardType = 'callHttp'): CardData => ({ 
     id: crypto.randomUUID(), 
-    type, 
-    succeded: false,
-    failed: false 
+    type
   });
 
   const renderSlot = (index: number) => (
