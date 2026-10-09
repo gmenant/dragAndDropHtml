@@ -1,8 +1,8 @@
 export const CARD_TYPES = {
-  CALLHTTP: 'callHttp',
+  CALLHTTP: 'CallHttp',
   FORM: 'Form',
   MAIL: 'Mail',
-  VALIDATION_ADMIN: 'validationAdmin',
+  VALIDATION_ADMIN: 'ValidationAdmin',
 } as const;
 
 export const CARD_STATUS = {

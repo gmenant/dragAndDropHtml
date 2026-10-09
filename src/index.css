@@ -31,6 +31,10 @@ body {
   width:900px
 }
 
+.render-slot-vertical{
+  width:900px
+}
+
 .flow-step-add:hover {
   transition: color 0.15s ease;
 }
@@ -40,8 +44,14 @@ body {
 }
 
 .flow-card-btn-close {
-  color: var(--bs-secondary);
   line-height: 1;
+  margin-inline: -0.5rem; 
+  background-color: rgba(220, 53, 69, 0);
+  transition: background-color 0.15s ease;
+}
+
+.flow-card-btn-close:hover {
+  background-color: rgba(220, 53, 69, 0.6);
 }
 
 .flow-card-btn-close:hover {
@@ -100,12 +110,23 @@ input {
   align-items: center;
   gap: 5px;
   border: 1px solid #e6e6e6;
-  background: var(--surface);
   padding: 4px 10px;
   border-radius: 8px;
   font-size: 12px;
   font-weight: 500;
   color: #29438d;
+}
+
+
+.flow-card-action-line {
+  position: absolute;
+  top: 100%;  
+  left: 50%; 
+  width: 1px;
+  height: 10px;
+  transform: translateX(-50%);
+  transform: translateY(1px);
+  pointer-events: none;
 }
 
 .card-summary {
@@ -146,4 +167,12 @@ input {
   cursor: grabbing;
   cursor: -moz-grabbing;
   cursor: -webkit-grabbing;
+}
+
+.glowing-box {
+  color: #198754;
+  padding: 20px 40px;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(25, 135, 84, 0.5), 
+              0 0 30px rgba(25, 135, 84, 0.2);
 }

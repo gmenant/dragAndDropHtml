@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
 import { SquarePlus, Flag, KeyRound } from 'lucide-react';
 import { CARD_TYPES, CARD_STATUS } from './constants/Constantes';
-import type { CardData, Step, CardType, CardField, FieldValue } from "./types/Types"
+import type { CardData, Step, CardType, CardField, FieldValue, InsertSlotProps } from "./types/Types"
 import TypePicker from "./components/TypePicker"
 import FlowStep from './components/FlowStep';
 
@@ -55,75 +55,79 @@ const initialSteps: Step[] = [
         corps: ["demand", "api", "plan", "user", "team"],
         response: ["accept: true | false"]
       }, schema: "",
-        status: CARD_STATUS.PENDING
+      status: CARD_STATUS.PENDING
     }]
   },
 ];
-
-const InsertButton = ({ onClick, onDropCard}: { onClick: () => void, onDropCard: (fromStepId: string, cardId: string) => void; }) => {
-  const [isOver, setIsOver] = useState(false);
-  return (
-    <button
-      onClick={onClick}
-      className={`flow-step-add border-0 ${isOver ? 'bg-success-subtle' : 'bg-transparent'}`}      
-      onDragOver={e => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        setIsOver(true);
-      }}
-      onDragLeave={() => setIsOver(false)}
-      onDrop={e => {
-        e.preventDefault();
-        setIsOver(false);
-        const raw = e.dataTransfer.getData('application/json');
-        if (!raw) return;
-        const { cardId, stepId } = JSON.parse(raw);
-        onDropCard(stepId, cardId);
-      }}
-    >
-      <SquarePlus/>
-    </button>)
-}
 
 const App = () => {
   const [steps, setSteps] = useState<Step[]>(initialSteps);
   const [pickingAt, setPickingAt] = useState<number | null>(null);
   const [justCreatedId, setJustCreatedId] = useState<string | null>(null);
-  const [verticalWorkflow, setVerticalWorkflow] = useState<boolean>(true)
-  const [processStarted, setActiveProcess] = useState(true)
+  const [verticalWorkflow, setVerticalWorkflow] = useState<boolean>(false)
+  const [processStarted, setActiveProcess] = useState(false)
 
-  const newCard = (type: CardType = 'callHttp'): CardData => ({ 
-    id: crypto.randomUUID(), 
+
+  const newCard = (type: CardType = 'CallHttp'): CardData => ({
+    id: crypto.randomUUID(),
     type
   });
 
-  const renderSlot = (index: number) => (
-    <div className="render-slot position-relative d-flex justify-content-center align-self-stretch">
-      <InsertButton
-        onClick={() => setPickingAt(index)}
-        onDropCard={(fromStepId, cardId) =>
-          moveCardToNewStep(fromStepId, cardId, index)
-        }
-      />
-      {pickingAt === index && (
-        <TypePicker
-          onSelect={(type) => insertStepProcess(index, type)}
-          onCancel={() => setPickingAt(null)}
-        />
-      )}
-    </div>
-  );
+  const InsertSlot = ({
+    verticalWorkflow,
+    isPicking,
+    onOpen,
+    onCancel,
+    onSelect,
+    onDropCard,
+  }: InsertSlotProps) => {
+    const [isOver, setIsOver] = useState(false);
+
+    return (
+      <div
+        className={`render-slot position-relative d-flex ${verticalWorkflow
+            ? 'align-self-stretch render-slot-horizontal'
+            : 'align-self-center render-slot-vertical'
+          }`}
+      >
+        <button
+          type="button"
+          onClick={onOpen}
+          className={`flow-step-add border-0 w-100 h-100 d-flex align-items-center justify-content-center rounded-3 ${isOver ? 'bg-success-subtle' : 'bg-transparent'
+            }`}
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            setIsOver(true);
+          }}
+          onDragLeave={() => setIsOver(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsOver(false);
+            const raw = e.dataTransfer.getData('application/json');
+            if (!raw) return;
+            const { cardId, stepId } = JSON.parse(raw);
+            onDropCard(stepId, cardId);
+          }}
+        >
+          <SquarePlus style={{ pointerEvents: 'none' }} />
+        </button>
+
+        {isPicking && <TypePicker onSelect={onSelect} onCancel={onCancel} />}
+      </div>
+    );
+  };
 
   const insertStepProcess = (index: number, type: CardType) => {
-  const card = newCard(type);
-  setJustCreatedId(card.id);
-  setSteps(prev => [
-    ...prev.slice(0, index),
-    { id: crypto.randomUUID(), cards: [card] },
-    ...prev.slice(index),
-  ]);
-  setPickingAt(null);
-};
+    const card = newCard(type);
+    setJustCreatedId(card.id);
+    setSteps(prev => [
+      ...prev.slice(0, index),
+      { id: crypto.randomUUID(), cards: [card] },
+      ...prev.slice(index),
+    ]);
+    setPickingAt(null);
+  };
 
   const updateCardType = (stepId: string, cardId: string, type: CardType) =>
     setSteps(prev =>
@@ -144,14 +148,14 @@ const App = () => {
     });
 
   const addCard = (stepId: string, type: CardType) => {
-  const card = newCard(type);
-  setJustCreatedId(card.id);
-  setSteps(prev =>
-    prev.map(s =>
-      s.id === stepId ? { ...s, cards: [...s.cards, card] } : s
-    )
-  );
-};
+    const card = newCard(type);
+    setJustCreatedId(card.id);
+    setSteps(prev =>
+      prev.map(s =>
+        s.id === stepId ? { ...s, cards: [...s.cards, card] } : s
+      )
+    );
+  };
 
   const deleteCard = (stepId: string, cardId: string) =>
     setSteps(prev =>
@@ -189,17 +193,17 @@ const App = () => {
         .filter(s => s.cards.length > 0);
     });
 
-const updateCardField = (
-  stepId: string,
-  cardId: string,
-  field: CardField,
-  value: FieldValue
-) =>
-  setSteps((prev) =>
-    prev.map((step) =>
-      step.id !== stepId
-        ? step
-        : {
+  const updateCardField = (
+    stepId: string,
+    cardId: string,
+    field: CardField,
+    value: FieldValue
+  ) =>
+    setSteps((prev) =>
+      prev.map((step) =>
+        step.id !== stepId
+          ? step
+          : {
             ...step,
             cards: step.cards.map((c) =>
               c.id === cardId
@@ -207,58 +211,76 @@ const updateCardField = (
                 : c
             ),
           }
-    )
-  );
+      )
+    );
 
   return (
     <div>
       <div className='d-grid gap-2 d-md-flex p-2'>
-        <button 
+        <button
           className='btn btn-primary'
           onClick={() => setVerticalWorkflow(!verticalWorkflow)}>
           {verticalWorkflow ? 'passer a verticale' : 'passer à l\'horizontal'}
         </button>
-          <button 
-          type="button" 
-          className="btn btn-secondary" 
+        <button
+          type="button"
+          className="btn btn-secondary"
           aria-pressed="true"
           onClick={() => setActiveProcess(!processStarted)}
-          >
+        >
           {processStarted ? 'desactiver process' : 'activer process'}
         </button>
       </div>
-    <div className={`flow-nodes d-flex  flex-wrap align-items-center p-3 ${verticalWorkflow ? 'flex-row': 'flex-column'}`}>
-      <div className={`badge rounded-pill p-2 px-3 m-2 border border-2 ${!processStarted? 'bg-light text-black' : 'bg-success p-2 text-white bg-opacity-75'}`}>
-        <Flag size={"15px"} />
-        Demande
+      <div className={`flow-nodes d-flex flex-wrap align-items-center p-3 ${verticalWorkflow ? 'flex-row' : 'flex-column'}`}>
+        <div className={`badge rounded-pill p-2 px-3 m-2 border border-2 ${!processStarted ? 'bg-light text-black' : 'bg-success p-2 text-white bg-opacity-75'}`}>
+          <Flag size={"15px"} />
+          Demande
+        </div>
+        {steps.map((step, index) => (
+          <Fragment key={step.id}>
+            {!processStarted &&
+              <InsertSlot
+                verticalWorkflow={verticalWorkflow}
+                isPicking={pickingAt === index}
+                onOpen={() => setPickingAt(index)}
+                onCancel={() => setPickingAt(null)}
+                onSelect={(type) => insertStepProcess(index, type)}
+                onDropCard={(fromStepId, cardId) =>
+                  moveCardToNewStep(fromStepId, cardId, index)
+                }
+              />}
+            <FlowStep
+              step={step}
+              canMoveLeft={index > 0}
+              canMoveRight={index < steps.length - 1}
+              onMoveLeft={() => moveStep(index, -1)}
+              onMoveRight={() => moveStep(index, 1)}
+              onAddCard={type => addCard(step.id, type)}
+              onDeleteCard={cardId => deleteCard(step.id, cardId)}
+              onChangeCardType={(cardId, type) => updateCardType(step.id, cardId, type)}
+              onDropCard={(fromStepId, cardId) => moveCard(fromStepId, cardId, step.id)}
+              onFieldChange={(cardId, field, value) => updateCardField(step.id, cardId, field, value)}
+              justCreatedId={justCreatedId}
+              verticalWorkflow={verticalWorkflow}
+              processStarted={processStarted}
+            />
+          </Fragment>
+        ))}
+        {!processStarted && <InsertSlot
+          verticalWorkflow={verticalWorkflow}
+          isPicking={pickingAt === steps.length}
+          onOpen={() => setPickingAt(steps.length)}
+          onCancel={() => setPickingAt(null)}
+          onSelect={(type) => insertStepProcess(steps.length, type)}
+          onDropCard={(fromStepId, cardId) =>
+            moveCardToNewStep(fromStepId, cardId, steps.length)
+          }
+        />}
+        <div className='rounded-pill bg-light p-2 px-3 m-2 border border-2'>
+          <KeyRound size={"15px"} />
+          Clé API générée
+        </div>
       </div>
-      {steps.map((step, index) => (
-        <Fragment key={step.id}>
-          
-          {!processStarted && renderSlot(index)}
-          <FlowStep
-            step={step}
-            canMoveLeft={index > 0}
-            canMoveRight={index < steps.length - 1}
-            onMoveLeft={() => moveStep(index, -1)}
-            onMoveRight={() => moveStep(index, 1)}
-            onAddCard={type => addCard(step.id, type)}
-            onDeleteCard={cardId => deleteCard(step.id, cardId)}
-            onChangeCardType={(cardId, type) => updateCardType(step.id, cardId, type)}
-            onDropCard={(fromStepId, cardId) => moveCard(fromStepId, cardId, step.id)}
-            onFieldChange={(cardId, field, value) => updateCardField(step.id, cardId, field, value)}
-            justCreatedId={justCreatedId}
-            verticalWorkflow={verticalWorkflow}
-            processStarted={processStarted}
-          />
-        </Fragment>
-      ))}
-      {!processStarted && renderSlot(steps.length)}
-      <div className='rounded-pill bg-light p-2 px-3 m-2 border border-2'>
-        <KeyRound size={"15px"} />
-        Clé API générée
-      </div>
-    </div>
     </div>
   );
 };

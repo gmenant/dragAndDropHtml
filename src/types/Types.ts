@@ -70,6 +70,7 @@ export type FormFlowCardProps = {
 export type FlowCardActionsProps = {
   onDelete: () => void;
   onEdit: () => void;
+  isEditable: boolean
 }
 
 export type FlowCardProps = {
@@ -98,3 +99,11 @@ export type CardStatus = (typeof CARD_STATUS)[keyof typeof CARD_STATUS];
 
 export type BaseCard = { id: string; schema?: string; status?: CardStatus };
 
+export type InsertSlotProps = {
+  verticalWorkflow: boolean;
+  isPicking: boolean;
+  onOpen: () => void;
+  onCancel: () => void;
+  onSelect: (type: CardType) => void;
+  onDropCard: (fromStepId: string, cardId: string) => void;
+};

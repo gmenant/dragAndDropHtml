@@ -28,7 +28,7 @@ const FlowStep = ({
     <div
       className={`flow-step position-relative d-flex flex-column p-3 m-2 rounded 
         ${step.cards.length > 1 ? 'border border-2 border-transparent' : 'border border-2 border-transparent'}
-        ${isOver ? 'border-2 bg-light border-success' : ''}
+        ${isOver ? 'border-2 glowing-box' : ''}
         ${verticalWorkflow ? 'flow-step-horizontal': 'flow-step-vertical' }`
       }
       onDragOver={e => {
@@ -55,7 +55,6 @@ const FlowStep = ({
             className={`btn btn-sm  translate-middle ${verticalWorkflow ? 'position-absolute top-50 start-0': 'position-absolute top-0 start-50'}`}
           >
             {verticalWorkflow ? <SquareChevronLeft fill='white' /> : <SquareChevronUp fill='white' />}
-            
           </button>
         )}
         <div className="d-grid gap-2 flex-grow-1">
@@ -75,7 +74,7 @@ const FlowStep = ({
             {!processStarted && 
             <button
               onClick={() => setIsPicking(true)}
-              className="btn btn-sm btn-outline-secondary"
+              className="btn btn-sm btn-outline-success"
             >
               + en parallèle
             </button>

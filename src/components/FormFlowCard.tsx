@@ -20,10 +20,11 @@ const FormFlowCard = ({ card, onDelete, onFieldChange, startEditing = false, pro
         : <FlowCardActions
           onDelete={onDelete}
           onEdit={() => setEditable((prev) => !prev)}
+          isEditable={editable}
         />
       }
       {editable && (
-        <div className="form-flow-card d-flex flex-column rounded-2 p-2 mb-3">
+        <div className="form-flow-card d-flex flex-column rounded-2 p-2 mb-3 border-2 border border-danger-subtle">
           <label htmlFor="title">Title :</label>
           <input
             type="text"
@@ -143,7 +144,16 @@ const FormFlowCard = ({ card, onDelete, onFieldChange, startEditing = false, pro
               />
             </>
           }
+          <div className='d-flex p-2 gap-2 justify-content-end'>
+            <button className='btn btn-primary'>
+              Save
+            </button>
+            <button className='btn btn-primary'>
+              Reinitialiser
+            </button>
+          </div>
         </div>
+
       )}
     </>
   );
