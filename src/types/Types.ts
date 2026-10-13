@@ -10,10 +10,6 @@ export type Step = { id: string; cards: CardData[] };
 
 export type FlowStepProps = {
   step: Step;
-  canMoveLeft: boolean;
-  canMoveRight: boolean;
-  onMoveLeft: () => void;
-  onMoveRight: () => void;
   onAddCard: (type: CardType) => void;
   onDeleteCard: (cardId: string) => void;
   onChangeCardType: (cardId: string, type: CardType) => void;
@@ -21,7 +17,8 @@ export type FlowStepProps = {
   onFieldChange: (cardId: string, field: CardField, value: FieldValue) => void;
   justCreatedId: string | null;
   verticalWorkflow: boolean;
-  processStarted: boolean
+  processStarted: boolean;
+  boxRef: (el: HTMLDivElement | null) => void;
 };
 
 export type CardType = (typeof CARD_TYPES)[keyof typeof CARD_TYPES];
@@ -80,7 +77,7 @@ export type FlowCardProps = {
   onDelete: () => void;
   onFieldChange: (field: CardField, value: FieldValue) => void;
   startEditing?: boolean;
-  processStarted: boolean
+  processStarted: boolean;
 };
 
 export type TypePickerProps = {

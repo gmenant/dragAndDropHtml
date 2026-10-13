@@ -19,8 +19,13 @@ body {
 }
 
 .flow-card {
-  border-radius: 25%;
-  border: solid 1px lightgrey
+  border-radius: 6px;
+  border: solid 1px #9B9B9B;
+}
+
+.flow-step{
+  border-radius: 16px;
+  border: dashed 2px !important; 
 }
 
 .flow-step-horizontal{
@@ -37,6 +42,7 @@ body {
 
 .flow-step-add:hover {
   transition: color 0.15s ease;
+  z-index: 0;
 }
 
 .render-slot:hover {
@@ -57,10 +63,6 @@ body {
 .flow-card-btn-close:hover {
   color: var(--bs-danger);
   transition: color 0.15s ease;
-}
-
-.flow-card-actions {
-  border-top: 1px solid #e6e6e6;
 }
 
 input {
@@ -109,7 +111,6 @@ input {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  border: 1px solid #e6e6e6;
   padding: 4px 10px;
   border-radius: 8px;
   font-size: 12px;
@@ -141,19 +142,15 @@ input {
 }
 
 .card-summary-icone {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
+  width: 35px;
+  height: 35px;
+  border-radius: 3px;
   display: grid;
   place-items: center;
   color: #29438d;
   background: #f4f5f9;
-  border: 1px solid #d6dbe9;
+  border: 1px solid #29438d;
   flex: none;
-}
-
-.form-flow-card {
-  background-color: #f1f3f5;
 }
 
 .cursor-pointer {
@@ -175,4 +172,11 @@ input {
   border-radius: 8px;
   box-shadow: 0 0 15px rgba(25, 135, 84, 0.5), 
               0 0 30px rgba(25, 135, 84, 0.2);
+}
+
+.flow-card-actions {
+  border-top: 1px solid #9B9B9B;
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+  margin-bottom: -0.5rem;
 }

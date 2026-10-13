@@ -3,23 +3,31 @@ import { Pencil, Trash } from "lucide-react"
 
 const FlowCardActions = ({ onDelete, onEdit, isEditable }: FlowCardActionsProps) => {
     return (
-        <div className='flow-card-actions p-2 d-grid gap-2 d-flex justify-content-between'>
-            <button
-                onClick={onEdit}
-                className={`flow-card-action position-relative ${isEditable ? 'border border-2 border-danger-subtle' : ''}`}                aria-label="Editer"
-            >
-                <Pencil stroke='#29438d' size={18}/>
-                {isEditable && <span className="flow-card-action-line border border-danger-subtle" />}
-            </button>
-            <button
-                onClick={onDelete}
-                className="flow-card-action"
-                aria-label="Supprimer"
-            >
-                <Trash stroke='#29438d' size={18} />
-            </button>
+        <div className="flow-card-actions mx-n2 mb-n2">
+            <div className='d-flex justify-content-between gap-2 p-2'>
+                <button
+                    type="button"
+                    onClick={onDelete}
+                    className="flow-card-action btn btn-outline-secondary"
+                    aria-label="Supprimer"
+                >
+                    <Trash stroke="#29438d" size={18} aria-hidden="true" />
+                    Supprimer
+                </button>
+                <button
+                    type="button"
+                    onClick={onEdit}
+                    className={`flow-card-action position-relative btn btn-outline-secondary ${isEditable ? 'border border-2' : ''
+                        }`}
+                    aria-label="Éditer"
+                    aria-pressed={isEditable}
+                >
+                    <Pencil stroke="#29438d" size={18} aria-hidden="true" />
+                    Modifier
+                </button>
+            </div>
         </div>
-    )
-}
+    );
+};
 
 export default FlowCardActions

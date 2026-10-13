@@ -2,15 +2,9 @@ import type { FlowStepProps } from "../types/Types";
 import { useState } from 'react';
 import FlowCard from "./FlowCard";
 import TypePicker from "./TypePicker";
-import { SquareChevronLeft, SquareChevronRight, SquareChevronUp, SquareChevronDown } from "lucide-react";
-
 
 const FlowStep = ({
   step, 
-  canMoveLeft, 
-  canMoveRight, 
-  onMoveLeft, 
-  onMoveRight, 
   onAddCard, 
   onDeleteCard, 
   onChangeCardType, 
@@ -18,7 +12,8 @@ const FlowStep = ({
   onFieldChange, 
   justCreatedId,
   verticalWorkflow,
-  processStarted
+  processStarted,
+  boxRef
 }: FlowStepProps) => {
 
   const [isOver, setIsOver] = useState(false);
@@ -26,11 +21,11 @@ const FlowStep = ({
 
   return (
     <div
-      className={`flow-step position-relative d-flex flex-column p-3 m-2 rounded 
-        ${step.cards.length > 1 ? 'border border-2 border-transparent' : 'border border-2 border-transparent'}
+      className={`flow-step position-relative d-flex flex-column p-2 m-2 bg-light
         ${isOver ? 'border-2 glowing-box' : ''}
         ${verticalWorkflow ? 'flow-step-horizontal': 'flow-step-vertical' }`
       }
+      ref={boxRef}
       onDragOver={e => {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move'
@@ -49,34 +44,28 @@ const FlowStep = ({
       }}
     >
       <div className="d-flex flex-row align-middle align-items-center w-100" >
-        {!processStarted && canMoveLeft && (
-          <button
-            onClick={onMoveLeft}
-            className={`btn btn-sm  translate-middle ${verticalWorkflow ? 'position-absolute top-50 start-0': 'position-absolute top-0 start-50'}`}
-          >
-            {verticalWorkflow ? <SquareChevronLeft fill='white' /> : <SquareChevronUp fill='white' />}
-          </button>
-        )}
         <div className="d-grid gap-2 flex-grow-1">
           {step.cards.map(card => (
-            <FlowCard
-              key={card.id}
-              card={card}
-              stepId={step.id}
-              onChangeType={type => onChangeCardType(card.id, type)}
-              onDelete={() => onDeleteCard(card.id)}
-              onFieldChange={(field, value) => onFieldChange(card.id, field, value)}
-              startEditing={card.id === justCreatedId}
-              processStarted={processStarted}
-            />
+            <div key={card.id} data-card-id={card.id}>
+              <FlowCard
+                key={card.id}
+                card={card}
+                stepId={step.id}
+                onChangeType={type => onChangeCardType(card.id, type)}
+                onDelete={() => onDeleteCard(card.id)}
+                onFieldChange={(field, value) => onFieldChange(card.id, field, value)}
+                startEditing={card.id === justCreatedId}
+                processStarted={processStarted}
+              />
+            </div>
           ))}
-          <div className="position-relative d-inline-block">
+          <div className="position-relative d-flex justify-content-center">
             {!processStarted && 
             <button
               onClick={() => setIsPicking(true)}
-              className="btn btn-sm btn-outline-success"
+              className="btn btn-sm btn-outline-primary"
             >
-              + en parallèle
+              + Action en parallèle
             </button>
             }
             {isPicking && (
@@ -90,15 +79,6 @@ const FlowStep = ({
             )}
           </div>
         </div>
-
-        {!processStarted && canMoveRight && (
-          <button
-            onClick={onMoveRight}
-            className={`btn btn-sm  translate-middle ${verticalWorkflow ? 'position-absolute top-50 start-100 ': 'position-absolute top-100 start-50 '}`}
-          >
-            {verticalWorkflow ? <SquareChevronRight fill='white' /> : <SquareChevronDown fill='white' />}
-          </button>
-        )}
       </div>
     </div>
   )

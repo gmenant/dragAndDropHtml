@@ -1,7 +1,7 @@
 import type {PillsRowProps, CallHttpContent, MailContent,ValidationAdminContent, FormContent } from "./../types/Types";
 
 const CallHttpSummary = ({ content }: { content?: CallHttpContent }) => (
-  <dl className="card-summary">
+  <dl className="card-summary p-2">
     <PillsRow label="Requête" values={content?.requete ?? []} />
     <PillsRow label="Headers" values={content?.headers ?? []} />
     <PillsRow label="Corps" values={content?.corps ?? []} />
@@ -10,21 +10,21 @@ const CallHttpSummary = ({ content }: { content?: CallHttpContent }) => (
 );
 
 const MailSummary = ({ content }: { content?: MailContent }) => (
-  <dl className="card-summary">
+  <dl className="card-summary p-2">
     <PillsRow label="Destinataires" values={content?.to ?? []} />
     <PillsRow label="Message" values={content?.message ?? []} />
   </dl>
 );
 
 const ValidationAdminSummary = ({ content }: { content?: ValidationAdminContent }) => (
-  <dl className="card-summary">
+  <dl className="card-summary p-2">
     <PillsRow label="Equipe" values={content?.equipe ?? []} />
     <PillsRow label="Canal" values={content?.canal ?? []} />
   </dl>
 );
 
 const FormSummary = ({ content }: { content?: FormContent }) => (
-  <dl className="card-summary">
+  <dl className="card-summary p-2">
     <PillsRow label="Champs" values={content?.champs ?? []} />
     <PillsRow label="Formatter" values={content?.formatter ?? []} />
     <PillsRow label="Metadata" values={content?.metadata ?? []} />

@@ -24,7 +24,7 @@ const FormFlowCard = ({ card, onDelete, onFieldChange, startEditing = false, pro
         />
       }
       {editable && (
-        <div className="form-flow-card d-flex flex-column rounded-2 p-2 mb-3 border-2 border border-danger-subtle">
+        <div className="form-flow-card d-flex flex-column rounded-2 p-2 mt-3 border-2 border">
           <label htmlFor="title">Title :</label>
           <input
             type="text"

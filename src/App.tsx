@@ -1,10 +1,11 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState} from 'react';
 import { SquarePlus, Flag, KeyRound } from 'lucide-react';
 import { CARD_TYPES, CARD_STATUS } from './constants/Constantes';
 import type { CardData, Step, CardType, CardField, FieldValue, InsertSlotProps } from "./types/Types"
 import TypePicker from "./components/TypePicker"
 import FlowStep from './components/FlowStep';
-
+import { useFleches } from "./hooks/useFleches";
+import { FlowArrows } from "./components/FlowArrows";
 
 const initialSteps: Step[] = [
   {
@@ -60,41 +61,31 @@ const initialSteps: Step[] = [
   },
 ];
 
-const App = () => {
-  const [steps, setSteps] = useState<Step[]>(initialSteps);
-  const [pickingAt, setPickingAt] = useState<number | null>(null);
-  const [justCreatedId, setJustCreatedId] = useState<string | null>(null);
-  const [verticalWorkflow, setVerticalWorkflow] = useState<boolean>(false)
-  const [processStarted, setActiveProcess] = useState(false)
 
+const InsertSlot = ({
+  verticalWorkflow,
+  isPicking,
+  onOpen,
+  onCancel,
+  onSelect,
+  onDropCard,
+}: InsertSlotProps) => {
+  const [isOver, setIsOver] = useState(false);
 
-  const newCard = (type: CardType = 'CallHttp'): CardData => ({
-    id: crypto.randomUUID(),
-    type
-  });
-
-  const InsertSlot = ({
-    verticalWorkflow,
-    isPicking,
-    onOpen,
-    onCancel,
-    onSelect,
-    onDropCard,
-  }: InsertSlotProps) => {
-    const [isOver, setIsOver] = useState(false);
-
-    return (
-      <div
-        className={`render-slot position-relative d-flex ${verticalWorkflow
-            ? 'align-self-stretch render-slot-horizontal'
-            : 'align-self-center render-slot-vertical'
-          }`}
-      >
+  return (
+    <div
+      className={`render-slot position-relative d-flex ${verticalWorkflow
+        ? 'align-self-stretch render-slot-horizontal'
+        : 'align-self-center render-slot-vertical'
+        }`}
+      style={{ zIndex: 2 }}
+    >
+      <div className="position-relative" style={{ width: '33.333%', minWidth: 48 }}>
         <button
           type="button"
           onClick={onOpen}
-          className={`flow-step-add border-0 w-100 h-100 d-flex align-items-center justify-content-center rounded-3 ${isOver ? 'bg-success-subtle' : 'bg-transparent'
-            }`}
+          className={`flow-step-add border-0 w-100 h-100 d-flex align-items-center justify-content-center rounded-3 ${isOver ? 'bg-success-subtle' : 'bg-transparent'}`}
+          style={{ padding: '0.75rem' }}
           onDragOver={(e) => {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
@@ -110,13 +101,36 @@ const App = () => {
             onDropCard(stepId, cardId);
           }}
         >
-          <SquarePlus style={{ pointerEvents: 'none' }} />
+          <SquarePlus
+            size={32}
+            strokeWidth="1"
+            fill="white"
+            style={{ pointerEvents: 'none' }}
+          />
         </button>
 
         {isPicking && <TypePicker onSelect={onSelect} onCancel={onCancel} />}
       </div>
-    );
-  };
+    </div>
+  );
+};
+
+
+const App = () => {
+
+  const [steps, setSteps] = useState<Step[]>(initialSteps);
+  const [pickingAt, setPickingAt] = useState<number | null>(null);
+  const [justCreatedId, setJustCreatedId] = useState<string | null>(null);
+  const [verticalWorkflow, setVerticalWorkflow] = useState<boolean>(false)
+  const [processStarted, setActiveProcess] = useState(false)
+
+  const { arrows, containerRef, stepRefs, demandeRef, cleApiRef } =
+    useFleches(steps, verticalWorkflow, processStarted);
+
+  const newCard = (type: CardType = 'CallHttp'): CardData => ({
+    id: crypto.randomUUID(),
+    type
+  });
 
   const insertStepProcess = (index: number, type: CardType) => {
     const card = newCard(type);
@@ -137,15 +151,6 @@ const App = () => {
           : s
       )
     );
-
-  const moveStep = (index: number, direction: -1 | 1) =>
-    setSteps(prev => {
-      const target = index + direction;
-      if (target < 0 || target >= prev.length) return prev;
-      const next = [...prev];
-      [next[index], next[target]] = [next[target], next[index]];
-      return next;
-    });
 
   const addCard = (stepId: string, type: CardType) => {
     const card = newCard(type);
@@ -215,7 +220,7 @@ const App = () => {
     );
 
   return (
-    <div>
+    <div className='w-100 overflow-x-auto'>
       <div className='d-grid gap-2 d-md-flex p-2'>
         <button
           className='btn btn-primary'
@@ -231,8 +236,14 @@ const App = () => {
           {processStarted ? 'desactiver process' : 'activer process'}
         </button>
       </div>
-      <div className={`flow-nodes d-flex flex-wrap align-items-center p-3 ${verticalWorkflow ? 'flex-row' : 'flex-column'}`}>
-        <div className={`badge rounded-pill p-2 px-3 m-2 border border-2 ${!processStarted ? 'bg-light text-black' : 'bg-success p-2 text-white bg-opacity-75'}`}>
+      <div
+        ref={containerRef}
+        className={`flow-nodes position-relative d-flex flex-nowrap align-items-center p-3 flex-nowrap ${verticalWorkflow ? 'flex-row' : 'flex-column'
+          }`}
+        style={{ width: "max-content", minWidth: "100%" }}
+      >
+        <FlowArrows arrows={arrows} verticalWorkflow={verticalWorkflow} />
+        <div ref={demandeRef} className={`badge rounded-pill p-2 px-3 m-2 border border-2 ${!processStarted ? 'bg-light text-black' : 'bg-success p-2 text-white bg-opacity-75'}`}>
           <Flag size={"15px"} />
           Demande
         </div>
@@ -251,10 +262,6 @@ const App = () => {
               />}
             <FlowStep
               step={step}
-              canMoveLeft={index > 0}
-              canMoveRight={index < steps.length - 1}
-              onMoveLeft={() => moveStep(index, -1)}
-              onMoveRight={() => moveStep(index, 1)}
               onAddCard={type => addCard(step.id, type)}
               onDeleteCard={cardId => deleteCard(step.id, cardId)}
               onChangeCardType={(cardId, type) => updateCardType(step.id, cardId, type)}
@@ -263,6 +270,7 @@ const App = () => {
               justCreatedId={justCreatedId}
               verticalWorkflow={verticalWorkflow}
               processStarted={processStarted}
+              boxRef={(el) => { stepRefs.current[step.id] = el; }}
             />
           </Fragment>
         ))}
@@ -276,7 +284,7 @@ const App = () => {
             moveCardToNewStep(fromStepId, cardId, steps.length)
           }
         />}
-        <div className='rounded-pill bg-light p-2 px-3 m-2 border border-2'>
+        <div ref={cleApiRef} className='rounded-pill bg-light p-2 px-3 m-2 border border-2'>
           <KeyRound size={"15px"} />
           Clé API générée
         </div>
