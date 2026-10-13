@@ -63,7 +63,6 @@ const initialSteps: Step[] = [
 
 
 const InsertSlot = ({
-  verticalWorkflow,
   isPicking,
   onOpen,
   onCancel,
@@ -74,9 +73,7 @@ const InsertSlot = ({
 
   return (
     <div
-      className={`render-slot position-relative d-flex ${verticalWorkflow
-        ? 'align-self-stretch render-slot-horizontal'
-        : 'align-self-center render-slot-vertical'
+      className={`render-slot position-relative d-flex align-self-stretch render-slot-horizontal
         }`}
       style={{ zIndex: 2 }}
     >
@@ -121,11 +118,10 @@ const App = () => {
   const [steps, setSteps] = useState<Step[]>(initialSteps);
   const [pickingAt, setPickingAt] = useState<number | null>(null);
   const [justCreatedId, setJustCreatedId] = useState<string | null>(null);
-  const [verticalWorkflow, setVerticalWorkflow] = useState<boolean>(false)
   const [processStarted, setActiveProcess] = useState(false)
 
   const { arrows, containerRef, stepRefs, demandeRef, cleApiRef } =
-    useFleches(steps, verticalWorkflow, processStarted);
+    useFleches(steps, processStarted);
 
   const newCard = (type: CardType = 'CallHttp'): CardData => ({
     id: crypto.randomUUID(),
@@ -223,11 +219,6 @@ const App = () => {
     <div className='w-100 overflow-x-auto'>
       <div className='d-grid gap-2 d-md-flex p-2'>
         <button
-          className='btn btn-primary'
-          onClick={() => setVerticalWorkflow(!verticalWorkflow)}>
-          {verticalWorkflow ? 'passer a verticale' : 'passer à l\'horizontal'}
-        </button>
-        <button
           type="button"
           className="btn btn-secondary"
           aria-pressed="true"
@@ -238,11 +229,11 @@ const App = () => {
       </div>
       <div
         ref={containerRef}
-        className={`flow-nodes position-relative d-flex flex-nowrap align-items-center p-3 flex-nowrap ${verticalWorkflow ? 'flex-row' : 'flex-column'
+        className={`flow-nodes position-relative d-flex flex-nowrap align-items-center p-3 flex-nowrap flex-column'
           }`}
         style={{ width: "max-content", minWidth: "100%" }}
       >
-        <FlowArrows arrows={arrows} verticalWorkflow={verticalWorkflow} />
+        <FlowArrows arrows={arrows} />
         <div ref={demandeRef} className={`badge rounded-pill p-2 px-3 m-2 border border-2 ${!processStarted ? 'bg-light text-black' : 'bg-success p-2 text-white bg-opacity-75'}`}>
           <Flag size={"15px"} />
           Demande
@@ -251,7 +242,6 @@ const App = () => {
           <Fragment key={step.id}>
             {!processStarted &&
               <InsertSlot
-                verticalWorkflow={verticalWorkflow}
                 isPicking={pickingAt === index}
                 onOpen={() => setPickingAt(index)}
                 onCancel={() => setPickingAt(null)}
@@ -268,14 +258,12 @@ const App = () => {
               onDropCard={(fromStepId, cardId) => moveCard(fromStepId, cardId, step.id)}
               onFieldChange={(cardId, field, value) => updateCardField(step.id, cardId, field, value)}
               justCreatedId={justCreatedId}
-              verticalWorkflow={verticalWorkflow}
               processStarted={processStarted}
               boxRef={(el) => { stepRefs.current[step.id] = el; }}
             />
           </Fragment>
         ))}
         {!processStarted && <InsertSlot
-          verticalWorkflow={verticalWorkflow}
           isPicking={pickingAt === steps.length}
           onOpen={() => setPickingAt(steps.length)}
           onCancel={() => setPickingAt(null)}

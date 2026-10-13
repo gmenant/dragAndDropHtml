@@ -32,14 +32,6 @@ body {
   width:400px
 }
 
-.flow-step-vertical{
-  width:900px
-}
-
-.render-slot-vertical{
-  width:900px
-}
-
 .flow-step-add:hover {
   transition: color 0.15s ease;
   z-index: 0;

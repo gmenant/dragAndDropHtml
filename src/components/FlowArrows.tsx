@@ -3,10 +3,9 @@ import type { Arrow } from "../hooks/useFleches";
 
 type FlowArrowsProps = {
   arrows: Arrow[];
-  verticalWorkflow: boolean;
 };
 
-export const FlowArrows = ({ arrows, verticalWorkflow }: FlowArrowsProps) => (
+export const FlowArrows = ({ arrows }: FlowArrowsProps) => (
   <svg
     style={{
       position: "absolute", top: 0, left: 0,
@@ -29,7 +28,7 @@ export const FlowArrows = ({ arrows, verticalWorkflow }: FlowArrowsProps) => (
     {arrows.map((a) => (
       <path
         key={a.id}
-        d={cheminArrondi(a.x1, a.y1, a.x2, a.y2, verticalWorkflow)}
+        d={cheminArrondi(a.x1, a.y1, a.x2, a.y2)}
         fill="none"
         stroke="#29438d"
         strokeWidth="2"

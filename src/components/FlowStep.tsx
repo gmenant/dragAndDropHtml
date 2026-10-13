@@ -11,7 +11,6 @@ const FlowStep = ({
   onDropCard, 
   onFieldChange, 
   justCreatedId,
-  verticalWorkflow,
   processStarted,
   boxRef
 }: FlowStepProps) => {
@@ -23,7 +22,7 @@ const FlowStep = ({
     <div
       className={`flow-step position-relative d-flex flex-column p-2 m-2 bg-light
         ${isOver ? 'border-2 glowing-box' : ''}
-        ${verticalWorkflow ? 'flow-step-horizontal': 'flow-step-vertical' }`
+        flow-step-horizontal`
       }
       ref={boxRef}
       onDragOver={e => {

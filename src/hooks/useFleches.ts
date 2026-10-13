@@ -2,11 +2,10 @@ import { useCallback, useLayoutEffect, useRef, useState } from "react";
 
 export type Arrow = { id: string; x1: number; y1: number; x2: number; y2: number };
 
-type StepLike = { id: string; cards: { id: string }[] };
+type StepLike = { id: string; };
 
 export const useFleches = (
   steps: StepLike[],
-  verticalWorkflow: boolean,
   processStarted: boolean
 ) => {
   const [arrows, setArrows] = useState<Arrow[]>([]);
@@ -20,15 +19,9 @@ export const useFleches = (
     if (!container) return;
     const c = container.getBoundingClientRect();
 
-    const sortie = (r: DOMRect) =>
-      verticalWorkflow
-        ? { x: r.right - c.left, y: r.top + r.height / 2 - c.top }
-        : { x: r.left + r.width / 2 - c.left, y: r.bottom - c.top };
+    const sortie = (r: DOMRect) => ({ x: r.right - c.left, y: r.top + r.height / 2 - c.top });
 
-    const entree = (r: DOMRect) =>
-      verticalWorkflow
-        ? { x: r.left - c.left, y: r.top + r.height / 2 - c.top }
-        : { x: r.left + r.width / 2 - c.left, y: r.top - c.top };
+    const entree = (r: DOMRect) => ({ x: r.left - c.left, y: r.top + r.height / 2 - c.top });
 
     const creer = (id: string, from: DOMRect, to: DOMRect): Arrow => {
       const p1 = sortie(from);
@@ -55,7 +48,7 @@ export const useFleches = (
     
 
     setArrows(next);
-  }, [steps, verticalWorkflow, processStarted]);
+  }, [steps, processStarted]);
 
   useLayoutEffect(() => {
     calculerFleches();
@@ -65,7 +58,6 @@ export const useFleches = (
     const container = containerRef.current;
     if (container) {
       ro.observe(container);
-      container.querySelectorAll("[data-card-id]").forEach((el) => ro.observe(el));
     }
     Object.values(stepRefs.current).forEach((el) => el && ro.observe(el));
     if (demandeRef.current) ro.observe(demandeRef.current);

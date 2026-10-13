@@ -16,7 +16,6 @@ export type FlowStepProps = {
   onDropCard: (fromStepId: string, cardId: string) => void;
   onFieldChange: (cardId: string, field: CardField, value: FieldValue) => void;
   justCreatedId: string | null;
-  verticalWorkflow: boolean;
   processStarted: boolean;
   boxRef: (el: HTMLDivElement | null) => void;
 };
@@ -97,7 +96,6 @@ export type CardStatus = (typeof CARD_STATUS)[keyof typeof CARD_STATUS];
 export type BaseCard = { id: string; schema?: string; status?: CardStatus };
 
 export type InsertSlotProps = {
-  verticalWorkflow: boolean;
   isPicking: boolean;
   onOpen: () => void;
   onCancel: () => void;
